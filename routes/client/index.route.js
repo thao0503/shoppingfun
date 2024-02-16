@@ -8,3 +8,4 @@ module.exports = (app) => {
     app.use("/products",productRoutes);
     
 }
+ 
