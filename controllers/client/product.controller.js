@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model")
 
+// [GET] /products
 module.exports.index = async (req,res) =>{
     const products = await Product.find({
         status: "active",
@@ -13,7 +14,7 @@ module.exports.index = async (req,res) =>{
       
 
     res.render("client/pages/products/index.pug",{
-        pageTitle: "Trang danh sách sản phẩm",
+        pageTitle: "Danh sách sản phẩm",
         products: newProducts
     });
 }
