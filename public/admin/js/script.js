@@ -155,3 +155,27 @@ if(showAlert){
     })
 }
 // End Show alert 
+
+// Upload image
+const  uploadImage = document.querySelector("[upload-image]")
+if(uploadImage){
+    const uploadImageInput = document.querySelector("[upload-image-input]")
+    const uploadImagePreview = document.querySelector("[upload-image-preview]")
+    const previewContainer = document.querySelector('.image-preview-container');
+    const removeButton = document.querySelector('.remove-image-button');
+    uploadImageInput.addEventListener("change",(e) => {
+        const file = e.target.files[0];
+        if(file){
+            uploadImagePreview.src = URL.createObjectURL(file);
+            previewContainer.style.display = 'block';
+        }
+    })
+
+    // Xóa hình ảnh khi nhấn nút "X"
+    removeButton.addEventListener('click', function() {
+        uploadImagePreview.src = '';
+        uploadImageInput.value = '';  // Reset input file
+        previewContainer.style.display = 'none';
+    });
+}   
+// End Upload image
