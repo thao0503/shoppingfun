@@ -153,7 +153,7 @@ module.exports.createPost = async(req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/products`);
 }
 
-//[GET] /admin/products/create
+//[GET] /admin/products/edit/:id
 module.exports.edit = async(req, res) => {
 
     try {
@@ -202,6 +202,28 @@ module.exports.editPatch = async(req, res) => {
     }
 
     res.redirect(`back`);
-    // console.log(req.body);
-    // res.send("ok")
+}
+
+//[GET] /admin/products/detail/:id
+module.exports.detail = async(req, res) => {
+
+    try {
+        const find = {
+            deleted: false,
+            _id: req.params.id
+        }
+    
+        const product = await Product.findOne(find);
+    
+        res.render("admin/pages/products/detail",{
+            pageTitle: product.title,
+            product: product
+        }
+            
+        )
+    } catch (error) {
+
+        req.flash("error","Không tìm thấy sản phẩm")
+        res.redirect(`${systemConfig.prefixAdmin}/products`);
+    }
 }

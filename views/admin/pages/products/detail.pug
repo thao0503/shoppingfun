@@ -1,0 +1,53 @@
+extends ../../layouts/default.pug
+
+block main 
+    .container
+      .row
+        .col-md-12
+          h1.text-center Thông Tin Chi Tiết Sản Phẩm
+          hr
+
+      .row
+        .col-md-6
+          .card.mb-3
+            .card-header Thông Tin Sản Phẩm
+            .card-body
+              dl.row
+                dt.col-sm-3 Tiêu đề
+                dd.col-sm-9= product.title
+
+                dt.col-sm-3 Giá
+                dd.col-sm-9= `${product.price} $`
+
+                dt.col-sm-3 Giảm giá
+                dd.col-sm-9= `${product.discountPercentage}%`
+
+                dt.col-sm-3 Còn lại
+                dd.col-sm-9= product.stock
+
+                dt.col-sm-3 Trạng thái
+                dd.col-sm-9
+                  if product.status == 'active'
+                    span.text-success Hoạt động
+                  else if product.status == 'inactive'
+                    span.text-danger Dừng hoạt động
+                  else
+                    span.text-warning Không rõ
+
+                dt.col-sm-3 Vị trí
+                dd.col-sm-9= product.position
+
+                dt.col-sm-3 Mô tả
+                dd.col-sm-9= product.description
+
+        .col-md-6
+          .card.mb-3
+            .card-header Hình Ảnh Sản Phẩm
+            .card-body.text-center
+              img(src=product.thumbnail, alt=product.title, class='img-fluid')
+
+      .row
+        .col-md-12.text-center
+          a.btn.btn-primary(href=`${prefixAdmin}/products/edit/${product.id}`) Chỉnh sửa sản phẩm
+
+    script(src="/admin/js/product.js")
