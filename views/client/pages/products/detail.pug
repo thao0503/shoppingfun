@@ -1,0 +1,29 @@
+extends ../../layouts/default.pug
+
+block main 
+    .container.mt-5
+      .row
+       
+        .col-md-6
+          img(src= product.thumbnail)
+
+      
+        .col-md-6
+          h1.text-primary #{product.title}
+
+          p.text-muted
+          .price
+            h4.text-success Giá:
+            - let discountedPrice = product.price * (1 - product.discountPercentage / 100)
+            span#product-price= discountedPrice.toLocaleString() + " $"
+
+            del.text-danger.mr-2 Giá gốc: 
+            span#product-original-price #{product.price}$
+            span.badge.badge-success.ml-2 Giảm giá: #{product.discountPercentage} %
+
+          .quantity.mt-4
+            h4 Số lượng có sẵn: #{product.stock} 
+          
+          .description.mt-5
+            h4 Mô tả sản phẩm
+            p #{product.description}
