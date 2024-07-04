@@ -4,6 +4,7 @@ include ../../mixins/pagination.pug
 include ../../mixins/search.pug
 include ../../mixins/alert.pug
 include ../../mixins/form-change-multi.pug
+include ../../mixins/sort.pug
 
 
 block main 
@@ -24,7 +25,7 @@ block main
                 .col-6 
                     +search(keyword)
 
-
+    +sort()
 
 
     .card.mb-3 
