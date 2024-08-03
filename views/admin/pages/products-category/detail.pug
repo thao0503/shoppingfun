@@ -1,0 +1,47 @@
+extends ../../layouts/default.pug
+
+block main 
+    .container
+      .row
+        .col-md-12
+          h1.text-center Chi Tiết Danh Mục
+          hr
+
+      .row
+        .col-md-6
+          .card.mb-3
+            .card-header Thông Tin Danh Mục
+            .card-body
+              dl.row.dl-horizontal
+                dt.col-sm-4 Tiêu đề
+                dd.col-sm-8= data.title
+
+                dt.col-sm-4 Danh mục cha
+                dd.col-sm-8= `${parentTitle}`
+
+                dt.col-sm-4 Trạng thái
+                dd.col-sm-8
+                  if data.status == 'active'
+                    span.text-success Hoạt động
+                  else if data.status == 'inactive'
+                    span.text-danger Dừng hoạt động
+                  else
+                    span.text-warning Không rõ
+
+                dt.col-sm-4 Vị trí
+                dd.col-sm-8= data.position
+
+                dt.col-sm-4 Mô tả
+                dd.col-sm-8 !{data.description}
+
+        .col-md-6
+          .card.mb-3
+            .card-header Hình Ảnh Danh Mục 
+            .card-body.text-center
+              img(src=data.thumbnail, alt=data.title, class='img-fluid')
+
+      .row
+        .col-md-12.text-center
+          a.btn.btn-primary(href=`${prefixAdmin}/products-category/edit/${data.id}`) Chỉnh sửa danh mục
+
+    script(src="/admin/js/product.js")

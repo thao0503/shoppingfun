@@ -96,3 +96,45 @@ module.exports.editPatch = async(req, res) => {
 
     res.redirect(`back`);
 }
+
+//[GET] /admin/products/detail/:id
+module.exports.detail = async(req, res) => {
+    try {
+        const find = {
+            deleted: false,
+            _id: req.params.id
+        };
+    
+        const data = await productCategory.findOne(find);
+
+        if (!data) {
+            req.flash("error", "Không tìm thấy danh mục sản phẩm");
+            return res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+        }
+
+        let parentTitle = "";
+
+        if (data.parent_id) {
+            const parentId = data.parent_id;
+            const parent = await productCategory.findOne({ _id: parentId });
+
+            if (parent) {
+                parentTitle = parent.title;
+            } else {
+                parentTitle = "Không tìm thấy danh mục cha";
+            }
+        } else {
+            parentTitle = "Đây là danh mục cấp cao nhất.";
+        }
+
+        res.render("admin/pages/products-category/detail", {
+            pageTitle: data.title,
+            data: data,
+            parentTitle: parentTitle
+        });
+    } catch (error) {
+        req.flash("error", "Không tìm thấy sản phẩm");
+        res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+    }
+};
+
