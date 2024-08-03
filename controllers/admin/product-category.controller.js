@@ -97,7 +97,7 @@ module.exports.editPatch = async(req, res) => {
     res.redirect(`back`);
 }
 
-//[GET] /admin/products/detail/:id
+//[GET] /admin/products-category/detail/:id
 module.exports.detail = async(req, res) => {
     try {
         const find = {
@@ -138,3 +138,29 @@ module.exports.detail = async(req, res) => {
     }
 };
 
+//[DELETE] /admin/products-category/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    const id = req.params.id;
+
+    await productCategory.updateOne({ _id: id}, { 
+        deleted: true,
+        deletedAt: new Date()
+    });
+
+    // Cập nhật lại data cho danh mục con
+    const data = await productCategory.findOne({_id: id})
+    await productCategory.updateMany({parent_id: id},{ $set: { parent_id: data.parent_id } } )
+
+    req.flash('success', `Đã xóa thành công!`);
+    res.redirect("back");
+}
+
+//[PATCH] /admin/products-category/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+    const status = req.params.status;
+    const id = req.params.id;
+
+    await productCategory.updateOne({ _id: id}, { status: status});
+    req.flash('success', 'Cập nhật trạng thái thành công!');
+    res.redirect("back");
+}
