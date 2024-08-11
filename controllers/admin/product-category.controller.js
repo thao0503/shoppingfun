@@ -1,22 +1,47 @@
 const productCategory = require("../../models/product-category.model")
 const systemConfig = require("../../config/system")
 const createTree = require("../../helpers/createTree")
+const filterStatusHelpers = require("../../helpers/filterStatus");
 
 //[GET] /admin/products-category
 module.exports.index = async (req, res) => {
+    try {
+        
+        let find = {
+            deleted: false
+        };
 
-    let find = {
-        deleted: false
-    };
+        const records = await productCategory.find(find);
 
-    const records = await productCategory.find(find);
+        // Lọc sản phẩm theo trạng thái
+        const filterStatus = filterStatusHelpers(req.query);
+        const status = req.query.status;
+        //Kết thúc lọc sản phẩm theo trạng thái
+        
+        const newRecords = createTree.tree(records,"",status)
 
-    const newRecords = createTree.tree(records)
+        //Số thứ tự danh mục
+        let index = 1;
+        const addIndex = (items) => {
+            items.forEach(item => {
+                item.index = index++;
+                if (item.children) {
+                    addIndex(item.children);
+                }
+            });
+        };
+        addIndex(newRecords);
+        //Kết thúc số thứ tự danh mục
     
-     res.render("admin/pages/products-category/index.pug",{
-         pageTitle: "Danh mục sản phẩm",
-         records: newRecords
-     });
+        res.render("admin/pages/products-category/index.pug",{
+            pageTitle: "Danh mục sản phẩm",
+            records: newRecords,
+            filterStatus: filterStatus,
+        });
+    } catch (error) {
+        req.flash("error","Yêu cầu của bạn không hợp lệ!");
+        res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+    }
  }
 
  //[GET] /admin/products-category/create

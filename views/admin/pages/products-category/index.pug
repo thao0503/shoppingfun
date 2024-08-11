@@ -1,11 +1,22 @@
 extends ../../layouts/default.pug
 include ../../mixins/table-tree.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/alert.pug
 
 
 block main 
 
+    +alert-error("5000")
+
+
     h1 Danh mục sản phẩm
 
+    .card.mb-3 
+        .card-haeder Bộ lọc và Tìm kiếm 
+        .card-body 
+            .row
+                .col-6
+                    +filter-status(filterStatus)
      
     .card.mb-3 
         .card-haeder Danh sách
