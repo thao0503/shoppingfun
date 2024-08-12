@@ -2,6 +2,8 @@ const productCategory = require("../../models/product-category.model")
 const systemConfig = require("../../config/system")
 const createTree = require("../../helpers/createTree")
 const filterStatusHelpers = require("../../helpers/filterStatus");
+const searchHelpers = require("../../helpers/search");
+
 
 //[GET] /admin/products-category
 module.exports.index = async (req, res) => {
@@ -17,8 +19,12 @@ module.exports.index = async (req, res) => {
         const filterStatus = filterStatusHelpers(req.query);
         const status = req.query.status;
         //Kết thúc lọc sản phẩm theo trạng thái
+
+         //Tìm kiếm 
+        const objectSearch = searchHelpers(req.query);
+        // Kết thúc tìm kiếm 
         
-        const newRecords = createTree.tree(records,"",status)
+        const newRecords = createTree.tree(records,"",status,  objectSearch.keywordRegex)
 
         //Số thứ tự danh mục
         let index = 1;
@@ -37,6 +43,7 @@ module.exports.index = async (req, res) => {
             pageTitle: "Danh mục sản phẩm",
             records: newRecords,
             filterStatus: filterStatus,
+            keyword: objectSearch.keyword,
         });
     } catch (error) {
         req.flash("error","Yêu cầu của bạn không hợp lệ!");
