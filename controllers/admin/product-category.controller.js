@@ -196,3 +196,56 @@ module.exports.changeStatus = async (req, res) => {
     req.flash('success', 'Cập nhật trạng thái thành công!');
     res.redirect("back");
 }
+
+//[PATCH] /admin/products-category/change-multi
+module.exports.changeMulti = async (req, res) => {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+     
+    switch (type) {
+        case "active":
+            await productCategory.updateMany({_id: {$in: ids}}, {status: "active"});
+            req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
+            break;
+        case "inactive":
+            await productCategory.updateMany({_id: {$in: ids}}, {status: "inactive"});
+            req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
+            break;
+        case "delete-all":
+
+            // Cập nhật lại danh mục cha cho các danh mục con
+            for (const id of ids){
+                const data = await productCategory.findOne({_id: id})
+                await productCategory.updateMany({parent_id: id},{ $set: { parent_id: data.parent_id } } )
+            }
+            // Kết thúc cập nhật lại danh mục cha cho các danh mục con
+
+            await productCategory.updateMany(
+                {_id: {$in: ids}}, 
+                {
+                    deleted: true,
+                    deletedAt: new Date()
+                }
+                );
+
+            req.flash('success', `Đã xóa thành công ${ids.length} sản phẩm!`);
+            break;
+        case "change-position":
+            for(const item of ids){
+                let [id, position] = item.split("-");
+                position = parseInt(position);
+                
+
+                await productCategory.updateOne({ _id: id},{
+                    position: position
+                });
+            }
+            req.flash('success', `Cập nhật thành công vị trí ${ids.length} sản phẩm!`);
+            break;
+    
+        default:
+            break;
+    }
+
+    res.redirect("back");
+}

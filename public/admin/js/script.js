@@ -101,7 +101,7 @@ if(formChangeMulti){
         //Xóa nhiều sản phẩm
         const typeChange = e.target.elements.type.value;
         if(typeChange == "delete-all"){
-            const isConfirm = confirm("Bạn có chắc muốn xóa tất cả những sản phảm này?");
+            const isConfirm = confirm("Bạn có chắc muốn xóa tất cả những sản phẩm này?");
 
             if(isConfirm == false){
                 return;
