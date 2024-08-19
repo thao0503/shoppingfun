@@ -189,11 +189,20 @@ module.exports.edit = async(req, res) => {
         }
     
         const product = await Product.findOne(find);
+
+        // Lấy danh mục sản phẩm
+        const category = await productCategory.find({
+            deleted: false
+        });
+    
+        const newCategory = createTree.tree(category)
+        // Kết thúc lấy danh mục sản phẩm
     
     
         res.render("admin/pages/products/edit",{
             pageTitle: "Chỉnh sửa sản phẩm",
-            product: product
+            product: product,
+            category: newCategory
         }
             
         )
