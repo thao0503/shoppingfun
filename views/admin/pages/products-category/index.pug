@@ -15,7 +15,7 @@ block main
     h1 Danh mục sản phẩm
 
     .card.mb-3 
-        .card-haeder Bộ lọc và Tìm kiếm 
+        .card-header Bộ lọc và Tìm kiếm 
         .card-body 
             .row
                 .col-6
@@ -25,7 +25,7 @@ block main
                     +search(keyword)
      
     .card.mb-3 
-        .card-haeder Danh sách
+        .card-header Danh sách
         .card-body 
             .row 
                 .col-8
@@ -52,8 +52,11 @@ block main
                                     th Hành động
 
                             tbody 
-                                +table-tree(records)
-
+                                if(records.length > 0)
+                                    +table-tree(records)
+                                else
+                                    tr 
+                                        td(colspan="8" class="text-center") Không có danh mục
     form(
         action=""
         method="POST"
