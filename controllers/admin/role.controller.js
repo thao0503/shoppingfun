@@ -83,3 +83,28 @@ module.exports.editPatch = async(req, res) => {
     res.redirect(`back`);
 
 }
+
+//[GET] /admin/roles/detail/:id
+module.exports.detail = async(req, res) => {
+
+    try {
+        const find = {
+            deleted: false,
+            _id: req.params.id
+        }
+    
+        const role = await Role.findOne(find);
+    
+        res.render("admin/pages/roles/detail",{
+            pageTitle: `Chi tiết ${role.title}`,
+            role: role
+        }
+            
+        )
+    } catch (error) {
+
+        req.flash("error","Không thể thực hiện yêu cầu của bạn!")
+        res.redirect(`${systemConfig.prefixAdmin}/roles`);
+    }
+
+}

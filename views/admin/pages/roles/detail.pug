@@ -1,0 +1,30 @@
+extends ../../layouts/default.pug
+
+block main 
+    .container
+      .row
+        .col-md-12
+          h1.text-center Chi Tiết Nhóm Quyền
+          hr
+
+      .row.justify-content-center
+        .col-md-6
+            .card.mb-3
+                .card-header Thông Tin Nhóm Quyền
+                .card-body
+                    dl.row.dl-horizontal
+                        dt.col-sm-4 Tiêu đề
+                        dd.col-sm-8= role.title
+
+                        dt.col-sm-4 Mô tả
+                        dd.col-sm-8 !{role.description}
+
+                        dt.col-sm-4 Tạo lúc
+                        dd.col-sm-8= new Date(role.createdAt).toLocaleString()
+
+                        dt.col-sm-4 Cập nhật lúc
+                        dd.col-sm-8= new Date(role.updatedAt).toLocaleString()
+
+      .row
+        .col-md-12.text-center
+          a.btn.btn-primary(href=`${prefixAdmin}/roles/edit/${role.id}`) Chỉnh sửa nhóm quyền
