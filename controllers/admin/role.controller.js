@@ -1,5 +1,6 @@
 const Role = require("../../models/role.model");
-const systemConfig = require("../../config/system")
+const systemConfig = require("../../config/system");
+const { json } = require("body-parser");
 
 
 // [GET] /admin/roles
@@ -119,4 +120,48 @@ module.exports.deleteItem = async (req, res) => {
     });
     req.flash('success', `Đã xóa thành công nhóm quyền!`);
     res.redirect("back");
+}
+
+//[GET] /admin/roles/permissions
+module.exports.permissions = async(req, res) => {
+
+    try {
+        const find = {
+            deleted: false,
+        }
+    
+        const roles = await Role.find(find);
+    
+        res.render("admin/pages/roles/permissions",{
+            pageTitle: `Phân quyền`,
+            roles: roles
+        }
+            
+        )
+    } catch (error) {
+
+        req.flash("error","Không thể thực hiện yêu cầu của bạn!")
+        res.redirect(`${systemConfig.prefixAdmin}/roles`);
+    }
+
+}
+
+//[PATCH] /admin/roles/permissions
+module.exports.permissionsPatch = async(req, res) => {
+
+    try {
+        
+        const permissions = JSON.parse(req.body.permissions);
+
+        for (const item of permissions) {
+            await Role.updateOne({ _id: item.id },{ permissions: item.permissions })
+        }
+
+        req.flash("success","Cập nhật phân quyền thành công!")
+        res.redirect("back")
+
+    } catch (error) {
+        req.flash("error","Cập nhật phân quyền thất bại!")
+        res.redirect("back")
+    }
 }
