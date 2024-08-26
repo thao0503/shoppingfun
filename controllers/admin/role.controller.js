@@ -1,7 +1,5 @@
 const Role = require("../../models/role.model");
 const systemConfig = require("../../config/system");
-const { json } = require("body-parser");
-
 
 // [GET] /admin/roles
 module.exports.index = async (req, res) => {
