@@ -15,15 +15,18 @@ module.exports.index = async (req, res) => {
         const accounts = await Account.find(find).select("-password -token");
 
         for (const account of accounts) {
-            const role = await Role.findOne({
-                _id: account.role_id,
-                deleted: false
-            });
+            if(account.role_id){
+                const role = await Role.findOne({
+                    _id: account.role_id,
+                    deleted: false
+                });
 
-            account.role = role;
-            
-        }
-    
+                account.role = role;
+
+            }else{
+                account.role = { title: "Tài khoản chưa được phân quyền" };
+            }
+        };    
         res.render("admin/pages/accounts/index.pug",{
             pageTitle: "Danh sách tài khoản",
             accounts: accounts

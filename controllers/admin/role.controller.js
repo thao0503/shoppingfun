@@ -1,4 +1,5 @@
 const Role = require("../../models/role.model");
+const Account = require("../../models/account.model");
 const systemConfig = require("../../config/system");
 
 // [GET] /admin/roles
@@ -111,6 +112,10 @@ module.exports.detail = async(req, res) => {
 //[DELETE] /admin/roles/delete/:id
 module.exports.deleteItem = async (req, res) => {
     const id = req.params.id;
+
+    //Cập nhật lại dữ liệu phân quyền cho tài khoản
+    await Account.updateMany({role_id: id},{ $unset: { role_id: ""} } )
+    //Kết thúc cập nhật lại dữ liệu phân quyền cho tài khoản
 
     await Role.updateOne({ _id: id}, { 
         deleted: true,
