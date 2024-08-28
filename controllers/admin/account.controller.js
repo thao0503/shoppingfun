@@ -126,3 +126,38 @@ module.exports.editPatch = async (req, res) => {
     res.redirect(`back`);
     
 }
+
+
+//[GET] /admin/accounts/detail/:id
+module.exports.detail = async(req,res) => {
+    try {
+        const find = {
+            _id: req.params.id,
+            deleted: false
+        };
+
+        const account = await Account.findOne(find);
+        
+        if(account.role_id){
+            const role = await Role.findOne({
+                _id: account.role_id,
+                deleted: false
+            });
+
+            account.role = role;
+
+        }else{
+            account.role = { title: "Tài khoản chưa được phân quyền" };
+        }
+
+
+        res.render("admin/pages/accounts/detail",{
+            pageTitle: "Chi tiết tài khoản",
+            account: account,
+        }
+        );
+    } catch (error) {
+        req.flash("error","Không tìm thấy tài khoản!")
+        res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+    }
+}
