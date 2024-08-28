@@ -81,3 +81,13 @@ block main
                         else
                             tr 
                                 td(colspan="8" class="text-center") Không tìm thấy tài khoản nào!
+
+    form(
+        action=""
+        method="POST"
+        id="form-delete-item"
+        data-path=`${prefixAdmin}/accounts/delete`
+        )                               
+
+    script(src="/admin/js/account.js") 
+    

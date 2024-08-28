@@ -161,3 +161,15 @@ module.exports.detail = async(req,res) => {
         res.redirect(`${systemConfig.prefixAdmin}/accounts`);
     }
 }
+
+//[DELETE] /admin/accounts/delete/:id
+module.exports.deleteItem = async (req, res) => {
+    const id = req.params.id;
+
+    await Account.updateOne({ _id: id}, { 
+        deleted: true,
+        deletedAt: new Date()
+    });
+    req.flash('success', ` Xóa tài khoản thành công!`);
+    res.redirect("back");
+}
