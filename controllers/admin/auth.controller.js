@@ -3,15 +3,31 @@ const md5 = require("md5")
 const systemConfig = require("../../config/system")
 
 // [GET] /admin/auth/login
-module.exports.login = (req, res) => {
-    res.render("admin/pages/auth/login",{
-        pageTitle: "Đăng nhập"
+module.exports.login = async (req, res) => {
+
+    const token = req.cookies.token;
+
+    if (!token) {
+        return res.render("admin/pages/auth/login", {
+            pageTitle: "Đăng nhập",
+        });
+    }
+
+    const user = await Account.findOne({
+        token: token
     });
+
+    if(user){
+        res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+    }else{
+        res.render("admin/pages/auth/login",{
+            pageTitle: "Đăng nhập"
+        });
+    }
 }
 
 // [POST] /admin/auth/login
 module.exports.loginPost = async(req, res) => {
-    // console.log(req.body)
     const email = req.body.email;
     const password = req.body.password;
 
