@@ -1,15 +1,17 @@
 extends ../../layouts/default.pug
+include ../../mixins/noPermission.pug
 
 block main 
+  if(userRole.permissions.includes("products-category_view"))
     .container
       .row
         .col-md-12
           h1.text-center Chi Tiết Danh Mục
           hr
 
-      .row
-        .col-md-6
-          .card.mb-3
+      .row.d-flex.justify-content-center
+        .col-md-6.d-flex.align-items-stretch
+          .card.mb-3.flex-fill
             .card-header Thông Tin Danh Mục
             .card-body
               dl.row.dl-horizontal
@@ -34,14 +36,16 @@ block main
                 dt.col-sm-4 Mô tả
                 dd.col-sm-8 !{data.description}
 
-        .col-md-6
-          .card.mb-3
+        .col-md-6.d-flex.align-items-stretch
+          .card.mb-3.flex-fill
             .card-header Hình Ảnh Danh Mục 
             .card-body.text-center
-              img(src=data.thumbnail, alt=data.title, class='img-fluid')
+              .image-container(style="width: 100%; height: 300px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid #ddd;")
+                img(src=data.thumbnail, alt=data.title, class='img-fluid' style="max-width: 100%; max-height: 100%; object-fit: cover;")
 
       .row
         .col-md-12.text-center
           a.btn.btn-primary(href=`${prefixAdmin}/products-category/edit/${data.id}`) Chỉnh sửa danh mục
+  else
+    +noPermission("Bạn không có quyền truy cập chức năng này!")            
 
-    script(src="/admin/js/product.js")

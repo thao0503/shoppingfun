@@ -1,29 +1,33 @@
 extends ../../layouts/default.pug
+include ../../mixins/noPermission.pug
 
 block main 
-    div(class="container")
-        div(class="row justify-content-center")
-            div(class="col-md-8")
-                div(class="card mt-5")
-                    div(class="card-header text-center")
-                        h2 Chi tiết tài khoản
-                    div(class="card-body")
-                        div(class="form-group text-center mt-4")
-                            img(src=account.avatar alt="Avatar" class="rounded-circle" width="150" height="150")
-                        div(class="form-group")
-                            label(for="fullName") Họ và tên:
-                            input(id="fullName" class="form-control" type="text" value=account.fullName readonly="readonly")
-                        div(class="form-group")
-                            label(for="email") Email:
-                            input(id="email" class="form-control" type="email" value=account.email readonly="readonly")
-                        div(class="form-group")
-                            label(for="phoneNumber") Số điện thoại:
-                            input(id="phoneNumber" class="form-control" type="text" value=account.phone readonly="readonly")
-                        div(class="form-group")
-                            label(for="role") Quyền:
-                            input(id="role" class="form-control" type="text" value=account.role.title readonly="readonly")
-                        div(class="form-group")
-                            label(for="status") Trạng thái:
-                            input(id="status" class="form-control" type="text" value=(account.status == "active" ? "Hoạt động" : "Dừng hoạt động") readonly="readonly")
-                        div(class="form-group text-center mt-4")
-                            a(class="btn btn-primary", href=`${prefixAdmin}/accounts/edit/${account.id}`) Cập nhật tài khoản
+    if(userRole.permissions.includes("accounts_view"))
+        div(class="container")
+            div(class="row justify-content-center")
+                div(class="col-md-8")
+                    div(class="card mt-5")
+                        div(class="card-header text-center")
+                            h2 Chi tiết tài khoản
+                        div(class="card-body")
+                            div(class="form-group text-center mt-4")
+                                img(src=account.avatar alt="Avatar" class="rounded-circle" width="150" height="150")
+                            div(class="form-group")
+                                label(for="fullName") Họ và tên:
+                                input(id="fullName" class="form-control" type="text" value=account.fullName readonly="readonly")
+                            div(class="form-group")
+                                label(for="email") Email:
+                                input(id="email" class="form-control" type="email" value=account.email readonly="readonly")
+                            div(class="form-group")
+                                label(for="phoneNumber") Số điện thoại:
+                                input(id="phoneNumber" class="form-control" type="text" value=account.phone readonly="readonly")
+                            div(class="form-group")
+                                label(for="role") Quyền:
+                                input(id="role" class="form-control" type="text" value=account.role.title readonly="readonly")
+                            div(class="form-group")
+                                label(for="status") Trạng thái:
+                                input(id="status" class="form-control" type="text" value=(account.status == "active" ? "Hoạt động" : "Dừng hoạt động") readonly="readonly")
+                            div(class="form-group text-center mt-4")
+                                a(class="btn btn-primary", href=`${prefixAdmin}/accounts/edit/${account.id}`) Cập nhật tài khoản
+    else
+        +noPermission("Bạn không có quyền truy cập chức năng này!") 

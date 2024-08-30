@@ -1,15 +1,17 @@
 extends ../../layouts/default.pug
+include ../../mixins/noPermission.pug
 
 block main 
+  if(userRole.permissions.includes("products_view"))
     .container
       .row
         .col-md-12
           h1.text-center Thông Tin Chi Tiết Sản Phẩm
           hr
 
-      .row
-        .col-md-6
-          .card.mb-3
+      .row.d-flex.justify-content-center
+        .col-md-6.d-flex.align-items-stretch
+          .card.mb-3.flex-fill
             .card-header Thông Tin Sản Phẩm
             .card-body
               dl.row
@@ -40,14 +42,15 @@ block main
                 dt.col-sm-3 Mô tả
                 dd.col-sm-9 !{product.description}
 
-        .col-md-6
-          .card.mb-3
-            .card-header Hình Ảnh Sản Phẩm
+        .col-md-6.d-flex.align-items-stretch
+          .card.mb-3.flex-fill
+            .card-header Hình Ảnh Sản Phẩm 
             .card-body.text-center
-              img(src=product.thumbnail, alt=product.title, class='img-fluid')
+              .image-container(style="width: 100%; height: 300px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid #ddd;")
+                img(src=product.thumbnail, alt=product.title, class='img-fluid' style="max-width: 100%; max-height: 100%; object-fit: cover;")
 
       .row
         .col-md-12.text-center
           a.btn.btn-primary(href=`${prefixAdmin}/products/edit/${product.id}`) Chỉnh sửa sản phẩm
-
-    script(src="/admin/js/product.js")
+  else
+    +noPermission("Bạn không có quyền truy cập chức năng này!") 

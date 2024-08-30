@@ -102,7 +102,7 @@ module.exports.createPost = async(req, res) => {
     const newRecords = createTree.tree(records)
 
     res.render("admin/pages/products-category/edit",{
-        pageTitle: "Thêm mới danh mục sản phẩm",
+        pageTitle: "Cập nhật danh mục sản phẩm",
         data: data,
         records: newRecords
     }  
