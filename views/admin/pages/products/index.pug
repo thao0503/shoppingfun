@@ -57,6 +57,7 @@ block main
                             th Giá
                             th Vị trí
                             th Trạng thái
+                            th Người tạo
                             th Hành động
 
                     tbody 
@@ -113,6 +114,9 @@ block main
                                                 span(
                                                     class="badge badge-danger"
                                                 ) Dừng hoạt động
+                                    td 
+                                        p #{item.userFullname}
+                                        p #{new Date(item.createdBy.createdAt).toLocaleString()}
                                     td 
                                         a(
                                             href = `${prefixAdmin}/products/detail/${item.id}`
