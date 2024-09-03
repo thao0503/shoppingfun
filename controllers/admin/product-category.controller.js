@@ -197,7 +197,7 @@ module.exports.detail = async(req, res) => {
                 item.userFullName = userUpdate.fullName;
             };
         };
-        
+
         let parentTitle = "";
 
         if (data.parent_id) {
@@ -230,7 +230,10 @@ module.exports.deleteItem = async (req, res) => {
 
     await productCategory.updateOne({ _id: id}, { 
         deleted: true,
-        deletedAt: new Date()
+        deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date()
+        }
     });
 
     // Cập nhật lại data cho danh mục con
@@ -296,7 +299,10 @@ module.exports.changeMulti = async (req, res) => {
                 {_id: {$in: ids}}, 
                 {
                     deleted: true,
-                    deletedAt: new Date()
+                    deletedBy: {
+                            account_id: res.locals.user.id,
+                            deletedAt: new Date()
+                        }
                 }
                 );
 

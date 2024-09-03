@@ -30,6 +30,10 @@ const productCategorySchema = new mongoose.Schema({
         default: false
     },
     deletedAt: Date,
+    deletedBy: {
+        account_id: String,
+        deletedAt: Date
+    },
     slug: { 
         type: String, 
         slug: "title",
