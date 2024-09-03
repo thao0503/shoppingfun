@@ -6,6 +6,7 @@ include ../../mixins/alert.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/sort.pug
 include ../../mixins/noPermission.pug
+include ../../mixins/moment.pug
 
 block main 
 
@@ -58,6 +59,7 @@ block main
                             th Vị trí
                             th Trạng thái
                             th Người tạo
+                            th Người cập nhật
                             th Hành động
 
                     tbody 
@@ -116,7 +118,14 @@ block main
                                                 ) Dừng hoạt động
                                     td 
                                         p #{item.userFullname}
-                                        p #{new Date(item.createdBy.createdAt).toLocaleString()}
+                                        p
+                                            +formatDate(item.createdBy.createdAt)
+                                    td 
+                                        - const updatedBy = item.updatedBy.slice(-1)[0]
+                                        if (updatedBy)
+                                            p #{updatedBy.userFullName}
+                                            p 
+                                                +formatDate(updatedBy.updatedAt)
                                     td 
                                         a(
                                             href = `${prefixAdmin}/products/detail/${item.id}`

@@ -64,6 +64,8 @@ module.exports.index = async (req, res) => {
         .skip(objectPagination.skip);
 
         for (const product of products) {
+
+            // Lấy thông tin người tạo
             const user = await Account.findOne({
                 _id: product.createdBy.account_id
             });
@@ -71,6 +73,17 @@ module.exports.index = async (req, res) => {
             if(user){
                 product.userFullname = user.fullName;
             };
+
+            // Lấy thông tin người cập nhật gần nhất
+            const updatedBy = product.updatedBy.slice(-1)[0];
+            if(updatedBy){
+                const userUpdate = await Account.findOne({
+                    _id: updatedBy.account_id
+                });
+
+                updatedBy.userFullName = userUpdate.fullName;
+            };
+
         };
         
 
@@ -92,9 +105,17 @@ module.exports.index = async (req, res) => {
 module.exports.changeStatus = async (req, res) => {
     const status = req.params.status;
     const id = req.params.id;
-    req.flash('success', 'Cập nhật trạng thái thành công!');
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
 
-    await Product.updateOne({ _id: id}, { status: status});
+    await Product.updateOne({ _id: id}, { 
+        status: status,
+        $push: {updatedBy: updatedBy}
+    });
+    
+    req.flash('success', 'Cập nhật trạng thái thành công!');
     res.redirect("back");
 }
 
@@ -103,13 +124,24 @@ module.exports.changeMulti = async (req, res) => {
     const type = req.body.type;
     const ids = req.body.ids.split(", ");
 
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
+
     switch (type) {
         case "active":
-            await Product.updateMany({_id: {$in: ids}}, {status: "active"});
+            await Product.updateMany({_id: {$in: ids}}, {
+                status: "active",
+                $push: {updatedBy: updatedBy}
+            });
             req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
             break;
         case "inactive":
-            await Product.updateMany({_id: {$in: ids}}, {status: "inactive"});
+            await Product.updateMany({_id: {$in: ids}}, {
+                status: "inactive",
+                $push: {updatedBy: updatedBy}   
+            });
             req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
             break;
         case "delete-all":
@@ -130,13 +162,12 @@ module.exports.changeMulti = async (req, res) => {
                 let [id, position] = item.split("-");
                 position = parseInt(position);
                 
-
                 await Product.updateOne({ _id: id},{
-                    position: position
+                    position: position,
+                    $push: {updatedBy: updatedBy}
                 });
             }
             break;
-    
         default:
             break;
     }
@@ -247,7 +278,16 @@ module.exports.editPatch = async(req, res) => {
     
 
     try {
-        await Product.updateOne({ _id: id},req.body)
+
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        }
+
+        await Product.updateOne({ _id: id},{
+            ...req.body,
+            $push: { updatedBy: updatedBy}
+        })
         req.flash("success","Cập nhật thành công")
     } catch (error) {
         req.flash("error","Cập nhật thất bại")
@@ -267,12 +307,23 @@ module.exports.detail = async(req, res) => {
         }
     
         const product = await Product.findOne(find);
+
+        // Lấy thông tin những người cập nhật
+        const updatedBy = product.updatedBy;
+        if(updatedBy){
+            for (const data of updatedBy) {
+                const userUpdate = await Account.findOne({
+                    _id: data.account_id
+                });
     
+                data.userFullName = userUpdate.fullName;
+            };
+        };
+        
         res.render("admin/pages/products/detail",{
             pageTitle: product.title,
             product: product
-        }
-            
+        }   
         )
     } catch (error) {
 
