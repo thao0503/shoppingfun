@@ -41,6 +41,16 @@ module.exports.index = async (req, res) => {
                     item.createdBy.userFullName = user.fullName;
                 };
 
+                // Lấy thông tin người cập nhật gần nhất
+                const updatedBy = item.updatedBy.slice(-1)[0];
+                if(updatedBy){
+                    const userUpdate = await Account.findOne({
+                        _id: updatedBy.account_id
+                    });
+
+                    updatedBy.userFullName = userUpdate.fullName;
+                };
+
                 if (item.children) {
                     await assignIndexAndFetchUserDetails(item.children);
                 }
@@ -133,7 +143,16 @@ module.exports.editPatch = async(req, res) => {
     try {
         const id = req.params.id
         req.body.position = parseInt(req.body.position);
-        await productCategory.updateOne({ _id: id},req.body)
+
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        }
+
+        await productCategory.updateOne({ _id: id},{
+            ...req.body,
+            $push: { updatedBy: updatedBy}
+        })
         req.flash("success","Cập nhật thành công")
     } catch (error) {
         req.flash("error","Cập nhật thất bại")
@@ -158,6 +177,27 @@ module.exports.detail = async(req, res) => {
             return res.redirect(`${systemConfig.prefixAdmin}/products-category`);
         }
 
+        //Lấy thông tin người tạo
+        const user =  await Account.findOne({
+            _id: data.createdBy.account_id
+        });
+
+        if(user){
+            data.createdBy.userFullName = user.fullName;
+        };
+
+        // Lấy thông tin những người cập nhật
+        const updatedBy = data.updatedBy;
+        if(updatedBy){
+            for (const item of updatedBy) {
+                const userUpdate = await Account.findOne({
+                    _id: item.account_id
+                });
+
+                item.userFullName = userUpdate.fullName;
+            };
+        };
+        
         let parentTitle = "";
 
         if (data.parent_id) {
@@ -206,7 +246,15 @@ module.exports.changeStatus = async (req, res) => {
     const status = req.params.status;
     const id = req.params.id;
 
-    await productCategory.updateOne({ _id: id}, { status: status});
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
+
+    await productCategory.updateOne({ _id: id}, { 
+        status: status,
+        $push: { updatedBy: updatedBy}
+    });
     req.flash('success', 'Cập nhật trạng thái thành công!');
     res.redirect("back");
 }
@@ -215,14 +263,24 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
     const type = req.body.type;
     const ids = req.body.ids.split(", ");
-     
+
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
     switch (type) {
         case "active":
-            await productCategory.updateMany({_id: {$in: ids}}, {status: "active"});
+            await productCategory.updateMany({_id: {$in: ids}}, {
+                status: "active",
+                $push: { updatedBy: updatedBy}
+            });
             req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
             break;
         case "inactive":
-            await productCategory.updateMany({_id: {$in: ids}}, {status: "inactive"});
+            await productCategory.updateMany({_id: {$in: ids}}, {
+                status: "inactive",
+                $push: { updatedBy: updatedBy}
+            });
             req.flash('success', `Đã cập nhật trạng thái thành công ${ids.length} sản phẩm!`);
             break;
         case "delete-all":
@@ -251,7 +309,8 @@ module.exports.changeMulti = async (req, res) => {
                 
 
                 await productCategory.updateOne({ _id: id},{
-                    position: position
+                    position: position,
+                    $push: { updatedBy: updatedBy}
                 });
             }
             req.flash('success', `Cập nhật thành công vị trí ${ids.length} sản phẩm!`);

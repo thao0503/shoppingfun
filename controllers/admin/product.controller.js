@@ -308,6 +308,15 @@ module.exports.detail = async(req, res) => {
     
         const product = await Product.findOne(find);
 
+        //Lấy thông tin người tạo
+        const user =  await Account.findOne({
+            _id: product.createdBy.account_id
+        });
+
+        if(user){
+            product.createdBy.userFullName = user.fullName;
+        };
+
         // Lấy thông tin những người cập nhật
         const updatedBy = product.updatedBy;
         if(updatedBy){

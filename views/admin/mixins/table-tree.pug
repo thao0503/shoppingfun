@@ -56,6 +56,12 @@ mixin table-tree(items, level = 1)
                 p 
                     +formatDate(item.createdBy.createdAt)
             td 
+                - const updatedBy = item.updatedBy.slice(-1)[0]
+                if (updatedBy)
+                    p #{updatedBy.userFullName}
+                    p 
+                        +formatDate(updatedBy.updatedAt)
+            td 
                 a(
                     href = `${prefixAdmin}/products-category/detail/${item.id}`
                     class ="btn btn-secondary btn-sm"

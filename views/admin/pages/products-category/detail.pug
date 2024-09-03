@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/noPermission.pug
+include ../../mixins/moment.pug
 
 block main 
   if(userRole.permissions.includes("products-category_view"))
@@ -35,6 +36,25 @@ block main
 
                 dt.col-sm-4 Mô tả
                 dd.col-sm-8 !{data.description}
+                dt.col-sm-3 Người tạo
+                dd.col-sm-9
+                  div
+                    strong= data.createdBy.userFullName
+                    |  (
+                    +formatDateTime(data.createdBy.createdAt)
+                    |  )
+                dt.col-sm-3 Người cập nhật
+                dd.col-sm-9
+                  - const recentUpdaters = data.updatedBy.slice().reverse()
+                  if recentUpdaters.length > 0
+                    each updater in recentUpdaters
+                      div
+                        strong= updater.userFullName
+                        |  (
+                        +formatDateTime(updater.updatedAt)
+                        |  )
+                  else
+                    | Không có thông tin cập nhật
 
         .col-md-6.d-flex.align-items-stretch
           .card.mb-3.flex-fill

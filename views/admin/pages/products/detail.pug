@@ -42,6 +42,13 @@ block main
 
                 dt.col-sm-3 Mô tả
                 dd.col-sm-9 !{product.description}
+                dt.col-sm-3 Người tạo
+                dd.col-sm-9
+                  div
+                    strong= product.createdBy.userFullName
+                    |  (
+                    +formatDateTime(product.createdBy.createdAt)
+                    |  )
                 dt.col-sm-3 Người cập nhật
                 dd.col-sm-9
                   - const recentUpdaters = product.updatedBy.slice().reverse()

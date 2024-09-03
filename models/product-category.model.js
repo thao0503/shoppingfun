@@ -19,6 +19,12 @@ const productCategorySchema = new mongoose.Schema({
             default: Date.now
         }
     },
+    updatedBy: [
+        {
+            account_id: String,
+            updatedAt: Date
+        }
+    ],
     deleted: {
         type: Boolean,
         default: false
@@ -29,8 +35,6 @@ const productCategorySchema = new mongoose.Schema({
         slug: "title",
         unique: true 
     }
-},{
-    timestamps: true
 });
 
 const ProductCategory = mongoose.model('ProductCategory', productCategorySchema, "products-category");
