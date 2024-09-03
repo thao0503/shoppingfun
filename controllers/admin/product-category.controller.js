@@ -1,4 +1,5 @@
 const productCategory = require("../../models/product-category.model")
+const Account = require("../../models/account.model")
 const systemConfig = require("../../config/system")
 const createTree = require("../../helpers/createTree")
 const filterStatusHelpers = require("../../helpers/filterStatus");
@@ -26,18 +27,26 @@ module.exports.index = async (req, res) => {
         
         const newRecords = createTree.tree(records,"",status,  objectSearch.keywordRegex)
 
-        //Số thứ tự danh mục
         let index = 1;
-        const addIndex = (items) => {
-            items.forEach(item => {
+        const assignIndexAndFetchUserDetails = async (categories) => {
+            for (const item of categories) {
                 item.index = index++;
+
+                //Lấy thông tin người tạo
+                const user =  await Account.findOne({
+                    _id: item.createdBy.account_id
+                });
+
+                if(user){
+                    item.createdBy.userFullName = user.fullName;
+                };
+
                 if (item.children) {
-                    addIndex(item.children);
+                    await assignIndexAndFetchUserDetails(item.children);
                 }
-            });
+            };
         };
-        addIndex(newRecords);
-        //Kết thúc số thứ tự danh mục
+        await assignIndexAndFetchUserDetails(newRecords);
     
         res.render("admin/pages/products-category/index.pug",{
             pageTitle: "Danh mục sản phẩm",
@@ -77,10 +86,15 @@ module.exports.createPost = async(req, res) => {
     }else{
         req.body.position = parseInt(req.body.position);
     }
-    
+
+    req.body.createdBy = {
+        account_id: res.locals.user.id
+    }
+
     const record = new productCategory(req.body);
     await record.save();
 
+    req.flash("success","Thêm mới danh mục thành công!")
     res.redirect(`${systemConfig.prefixAdmin}/products-category`);
 }
 

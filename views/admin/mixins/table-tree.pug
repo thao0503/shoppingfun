@@ -1,5 +1,5 @@
 mixin table-tree(items, level = 1)
-    each item, index in items
+    each item in items
         - const prefix = Array(level + 1).join("-- ")
         tr 
             td 
@@ -51,6 +51,10 @@ mixin table-tree(items, level = 1)
                         span(
                             class="badge badge-danger"
                         ) Dừng hoạt động
+            td 
+                p #{item.createdBy.userFullName}
+                p 
+                    +formatDate(item.createdBy.createdAt)
             td 
                 a(
                     href = `${prefixAdmin}/products-category/detail/${item.id}`
