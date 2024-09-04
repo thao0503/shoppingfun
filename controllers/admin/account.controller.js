@@ -200,7 +200,10 @@ module.exports.deleteItem = async (req, res) => {
 
     await Account.updateOne({ _id: id}, { 
         deleted: true,
-        deletedAt: new Date()
+        deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date()
+        }
     });
     req.flash('success', ` Xóa tài khoản thành công!`);
     res.redirect("back");
