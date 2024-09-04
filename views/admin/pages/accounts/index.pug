@@ -1,6 +1,7 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 include ../../mixins/noPermission.pug
+include ../../mixins/moment.pug
 
 block main 
     if(userRole.permissions.includes("accounts_view"))
@@ -33,6 +34,7 @@ block main
                                 th Phân quyền
                                 th Email
                                 th Trạng thái
+                                th Người tạo
                                 th Hành động
 
                         tbody 
@@ -47,7 +49,11 @@ block main
                                             height= "auto"
                                             )
                                         td #{item.fullName}
-                                        td #{item.role.title}
+                                        td
+                                            if(item.role)
+                                                span #{item.role.title}
+                                            else  
+                                                span Tài khoản chưa được phân quyền 
                                         td #{item.email}
                                         td 
                                             if(userRole.permissions.includes("accounts_edit"))
@@ -76,6 +82,10 @@ block main
                                                     span(
                                                         class="badge badge-danger"
                                                     ) Dừng hoạt động
+                                        td 
+                                            p #{item.createdBy.userFullName}
+                                            p
+                                                +formatDate(item.createdBy.createdAt)
                                         td 
                                             a(
                                                 href = `${prefixAdmin}/accounts/detail/${item.id}`

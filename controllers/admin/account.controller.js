@@ -15,6 +15,7 @@ module.exports.index = async (req, res) => {
         const accounts = await Account.find(find).select("-password -token");
 
         for (const account of accounts) {
+            // Lấy thông tin nhóm quyền
             if(account.role_id){
                 const role = await Role.findOne({
                     _id: account.role_id,
@@ -22,10 +23,18 @@ module.exports.index = async (req, res) => {
                 });
 
                 account.role = role;
+            };
+            // Kết thúc lấy thông tin nhóm quyền
 
-            }else{
-                account.role = { title: "Tài khoản chưa được phân quyền" };
-            }
+            // Lấy thông tin người tạo
+            const creator = await Account.findOne({
+                _id: account.createdBy.account_id
+            });
+
+            if(creator){
+                account.createdBy.userFullName = creator.fullName;
+            };
+            // Kết thúc lấy thông tin người tạo
         };    
         res.render("admin/pages/accounts/index.pug",{
             pageTitle: "Danh sách tài khoản",
@@ -64,6 +73,10 @@ module.exports.createPost = async(req, res) => {
         res.redirect(`back`);
     }else{
         req.body.password = md5(req.body.password);
+
+        req.body.createdBy = {
+            account_id: res.locals.user.id
+        }
 
         const newAccount = new Account(req.body);
         await newAccount.save();
