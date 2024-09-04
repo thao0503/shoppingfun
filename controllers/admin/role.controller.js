@@ -11,6 +11,18 @@ module.exports.index = async (req, res) => {
         }
     
         const roles = await Role.find(find);
+
+        for (const role of roles) {
+
+            // Lấy thông tin người tạo
+            const creator = await Account.findOne({
+                _id: role.createdBy.account_id
+            });
+
+            if(creator){
+                role.createdBy.userFullName = creator.fullName;
+            };
+        };
     
         res.render("admin/pages/roles/index.pug",{
             pageTitle: "Nhóm quyền",
@@ -34,10 +46,15 @@ module.exports.create = async(req, res) => {
 
 //[POST] /admin/roles/create
 module.exports.createPost = async(req, res) => {
-    
+
+    req.body.createdBy = {
+        account_id: res.locals.user.id
+    }
+
     const newRole = new Role(req.body)
     await newRole.save()
 
+    req.flash("success","Thêm mới nhóm quyền thành công!")
     res.redirect(`${systemConfig.prefixAdmin}/roles`);
 
 }
