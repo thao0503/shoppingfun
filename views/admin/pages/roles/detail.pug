@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/noPermission.pug
+include ../../mixins/moment.pug
 
 block main 
   if(userRole.permissions.includes("roles_view"))
@@ -21,11 +22,25 @@ block main
                 dt.col-sm-4 Mô tả
                 dd.col-sm-8 !{role.description}
 
-                dt.col-sm-4 Tạo lúc
-                dd.col-sm-8= new Date(role.createdAt).toLocaleString()
-
-                dt.col-sm-4 Cập nhật lúc
-                dd.col-sm-8= new Date(role.updatedAt).toLocaleString()
+                dt.col-sm-4 Người tạo
+                dd.col-sm-8
+                  div
+                    strong= role.createdBy.userFullName
+                    |  (
+                    +formatDateTime(role.createdBy.createdAt)
+                    |  )
+                dt.col-sm-4 Người cập nhật
+                dd.col-sm-8
+                  - const recentUpdaters = role.updatedBy.slice().reverse()
+                  if recentUpdaters.length > 0
+                    each updater in recentUpdaters
+                      div
+                        strong= updater.userFullName
+                        |  (
+                        +formatDateTime(updater.updatedAt)
+                        |  )
+                  else
+                    | Không có thông tin cập nhật
 
       .row
         .col-md-12.text-center

@@ -1,6 +1,7 @@
 const Role = require("../../models/role.model");
 const Account = require("../../models/account.model");
 const systemConfig = require("../../config/system");
+const checkArraysEqual = require("../../helpers/checkArraysEqual");
 
 // [GET] /admin/roles
 module.exports.index = async (req, res) => {
@@ -21,6 +22,16 @@ module.exports.index = async (req, res) => {
 
             if(creator){
                 role.createdBy.userFullName = creator.fullName;
+            };
+
+            // Lấy thông tin người cập nhật gần nhất
+            const updatedBy = role.updatedBy.slice(-1)[0];
+            if(updatedBy){
+                const updater = await Account.findOne({
+                    _id: updatedBy.account_id
+                });
+
+                updatedBy.userFullName = updater.fullName;
             };
         };
     
@@ -89,7 +100,16 @@ module.exports.editPatch = async(req, res) => {
     const id = req.params.id
 
     try {
-        await Role.updateOne({ _id: id},req.body)
+
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        }    
+
+        await Role.updateOne({ _id: id},{
+            ...req.body,
+            $push: {updatedBy: updatedBy}
+    })
         req.flash("success","Cập nhật thành công")
     } catch (error) {
         req.flash("error","Cập nhật thất bại")
@@ -110,15 +130,34 @@ module.exports.detail = async(req, res) => {
         }
     
         const role = await Role.findOne(find);
+
+         //Lấy thông tin người tạo
+         const creator =  await Account.findOne({
+            _id: role.createdBy.account_id
+        });
+
+        if(creator){
+            role.createdBy.userFullName = creator.fullName;
+        };
+
+        // Lấy thông tin những người cập nhật
+        const updatedBy = role.updatedBy;
+        if(updatedBy){
+            for (const item of updatedBy) {
+                const updater = await Account.findOne({
+                    _id: item.account_id
+                });
+    
+                item.userFullName = updater.fullName;
+            };
+        };
     
         res.render("admin/pages/roles/detail",{
             pageTitle: `Chi tiết ${role.title}`,
             role: role
         }
-            
-        )
+        );
     } catch (error) {
-
         req.flash("error","Không thể thực hiện yêu cầu của bạn!")
         res.redirect(`${systemConfig.prefixAdmin}/roles`);
     }
@@ -172,11 +211,31 @@ module.exports.permissionsPatch = async(req, res) => {
         
         const permissions = JSON.parse(req.body.permissions);
 
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        } 
+
+        let hasChanges = false; // cờ theo dõi thay đổi
         for (const item of permissions) {
-            await Role.updateOne({ _id: item.id },{ permissions: item.permissions })
+            const role = await Role.findOne({ _id: item.id});
+
+            if(!checkArraysEqual(role.permissions,item.permissions)){
+                await Role.updateOne({ _id: item.id },{ 
+                    permissions: item.permissions,
+                    $push: {updatedBy: updatedBy}
+                });
+                hasChanges = true;
+            }
         }
 
-        req.flash("success","Cập nhật phân quyền thành công!")
+        // Gửi phản hồi sau khi hoàn tất cập nhật
+        if (hasChanges) {
+            req.flash("success", "Cập nhật phân quyền thành công!");
+        } else {
+            req.flash("warning", "Chưa có thay đổi!");
+        };
+
         res.redirect("back")
 
     } catch (error) {
