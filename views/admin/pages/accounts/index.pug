@@ -35,6 +35,7 @@ block main
                                 th Email
                                 th Trạng thái
                                 th Người tạo
+                                th Người cập nhật
                                 th Hành động
 
                         tbody 
@@ -86,6 +87,12 @@ block main
                                             p #{item.createdBy.userFullName}
                                             p
                                                 +formatDate(item.createdBy.createdAt)
+                                        td 
+                                            - const updatedBy = item.updatedBy.slice(-1)[0]
+                                            if (updatedBy)
+                                                p #{updatedBy.userFullName}
+                                                p 
+                                                    +formatDate(updatedBy.updatedAt)
                                         td 
                                             a(
                                                 href = `${prefixAdmin}/accounts/detail/${item.id}`

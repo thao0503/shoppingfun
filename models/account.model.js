@@ -21,6 +21,12 @@ const accountSchema = new mongoose.Schema({
             default: Date.now
         }
     },
+    updatedBy: [
+        {
+            account_id: String,
+            updatedAt: Date
+        }
+    ],
     deleted: {
         type: Boolean,
         default: false

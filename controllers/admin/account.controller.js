@@ -35,6 +35,18 @@ module.exports.index = async (req, res) => {
                 account.createdBy.userFullName = creator.fullName;
             };
             // Kết thúc lấy thông tin người tạo
+
+            // Lấy thông tin người cập nhật gần nhất
+            const updatedBy = account.updatedBy.slice(-1)[0];
+            if(updatedBy){
+                const updater = await Account.findOne({
+                    _id: updatedBy.account_id
+                });
+
+                updatedBy.userFullName = updater.fullName;
+            };
+            // kKết thúc lấy thông tin người cập nhật gần nhất
+
         };    
         res.render("admin/pages/accounts/index.pug",{
             pageTitle: "Danh sách tài khoản",
@@ -131,13 +143,20 @@ module.exports.editPatch = async (req, res) => {
         }else{
             delete req.body.password;
         }
-    
-        await Account.updateOne({_id: id},req.body);
+        
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        };
+
+        await Account.updateOne({_id: id},{
+            ...req.body,
+            $push: {updatedBy: updatedBy}
+        });
         req.flash("success","Cập nhật tài khoản thành công!");
     }
 
     res.redirect(`back`);
-    
 }
 
 
@@ -192,7 +211,15 @@ module.exports.changeStatus = async (req, res) => {
     const status = req.params.status;
     const id = req.params.id;
 
-    await Account.updateOne({ _id: id}, { status: status});
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    };
+
+    await Account.updateOne({ _id: id}, { 
+        status: status,
+        $push: {updatedBy: updatedBy}
+    });
 
     req.flash('success', 'Cập nhật trạng thái thành công!');
     res.redirect("back");
