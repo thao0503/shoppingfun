@@ -174,7 +174,10 @@ module.exports.deleteItem = async (req, res) => {
 
     await Role.updateOne({ _id: id}, { 
         deleted: true,
-        deletedAt: new Date()
+        deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date()
+        }
     });
     req.flash('success', `Đã xóa thành công nhóm quyền!`);
     res.redirect("back");
