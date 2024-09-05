@@ -1,0 +1,29 @@
+extends ../../layouts/default.pug
+
+block main 
+    div(class="container")
+        div(class="row justify-content-center")
+            div(class="col-md-8")
+                div(class="card mt-5")
+                    div(class="card-header text-center")
+                        h2 Thông tin cá nhân
+                    div(class="card-body")
+                        div(class="form-group text-center mt-4")
+                            img(src=user.avatar alt="Avatar" class="rounded-circle" width="150" height="150")
+                        div(class="form-group")
+                            label(for="fullName") Họ và tên:
+                            input(id="fullName" class="form-control" type="text" value=user.fullName readonly="readonly")
+                        div(class="form-group")
+                            label(for="email") Email:
+                            input(id="email" class="form-control" type="email" value=user.email readonly="readonly")
+                        div(class="form-group")
+                            label(for="phoneNumber") Số điện thoại:
+                            input(id="phoneNumber" class="form-control" type="text" value=user.phone readonly="readonly")
+                        div(class="form-group")
+                            label(for="role") Quyền:
+                            input(id="role" class="form-control" type="text" value=userRole.title readonly="readonly")
+                        div(class="form-group")
+                            label(for="status") Trạng thái:
+                            input(id="status" class="form-control" type="text" value=(user.status == "active" ? "Hoạt động" : "Dừng hoạt động") readonly="readonly")
+                        div(class="form-group text-center mt-4")
+                            a(class="btn btn-primary", href=`${prefixAdmin}/my-account/edit`) Cập nhật tài khoản
