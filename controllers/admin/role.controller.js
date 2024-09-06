@@ -58,16 +58,20 @@ module.exports.create = async(req, res) => {
 //[POST] /admin/roles/create
 module.exports.createPost = async(req, res) => {
 
-    req.body.createdBy = {
-        account_id: res.locals.user.id
+    const permissions = res.locals.userRole.permissions;
+    if(permissions.includes("roles_create")){
+        req.body.createdBy = {
+            account_id: res.locals.user.id
+        }
+    
+        const newRole = new Role(req.body)
+        await newRole.save()
+    
+        req.flash("success","Thêm mới nhóm quyền thành công!")
+        res.redirect(`${systemConfig.prefixAdmin}/roles`);
+    }else{
+        return;
     }
-
-    const newRole = new Role(req.body)
-    await newRole.save()
-
-    req.flash("success","Thêm mới nhóm quyền thành công!")
-    res.redirect(`${systemConfig.prefixAdmin}/roles`);
-
 }
 
 //[GET] /admin/roles/edit/:id
@@ -97,10 +101,11 @@ module.exports.edit = async(req, res) => {
 
 //[PATCH] /admin/roles/edit/:id
 module.exports.editPatch = async(req, res) => {
-    const id = req.params.id
 
-    try {
+    const permissions = res.locals.userRole.permissions;
+    if(permissions.includes("roles_edit")){
 
+        const id = req.params.id
         const updatedBy = {
             account_id: res.locals.user.id,
             updatedAt: new Date()
@@ -109,15 +114,13 @@ module.exports.editPatch = async(req, res) => {
         await Role.updateOne({ _id: id},{
             ...req.body,
             $push: {updatedBy: updatedBy}
-    })
+        })
+
         req.flash("success","Cập nhật thành công")
-    } catch (error) {
-        req.flash("error","Cập nhật thất bại")
-
+        res.redirect(`back`);
+    }else{
+        return;
     }
-
-    res.redirect(`back`);
-
 }
 
 //[GET] /admin/roles/detail/:id
@@ -166,21 +169,27 @@ module.exports.detail = async(req, res) => {
 
 //[DELETE] /admin/roles/delete/:id
 module.exports.deleteItem = async (req, res) => {
-    const id = req.params.id;
 
-    //Cập nhật lại dữ liệu phân quyền cho tài khoản
-    await Account.updateMany({role_id: id},{ $unset: { role_id: ""} } )
-    //Kết thúc cập nhật lại dữ liệu phân quyền cho tài khoản
+    const permissions = res.locals.userRole.permissions;
+    if(permissions.includes("roles_delete")){
+        const id = req.params.id;
 
-    await Role.updateOne({ _id: id}, { 
-        deleted: true,
-        deletedBy: {
-            account_id: res.locals.user.id,
-            deletedAt: new Date()
-        }
-    });
-    req.flash('success', `Đã xóa thành công nhóm quyền!`);
-    res.redirect("back");
+        //Cập nhật lại dữ liệu phân quyền cho tài khoản
+        await Account.updateMany({role_id: id},{ $unset: { role_id: ""} } )
+        //Kết thúc cập nhật lại dữ liệu phân quyền cho tài khoản
+
+        await Role.updateOne({ _id: id}, { 
+            deleted: true,
+            deletedBy: {
+                account_id: res.locals.user.id,
+                deletedAt: new Date()
+            }
+        });
+        req.flash('success', `Đã xóa thành công nhóm quyền!`);
+        res.redirect("back");
+    }else{
+        return;
+    }
 }
 
 //[GET] /admin/roles/permissions
@@ -210,39 +219,44 @@ module.exports.permissions = async(req, res) => {
 //[PATCH] /admin/roles/permissions
 module.exports.permissionsPatch = async(req, res) => {
 
-    try {
+    const permissions = res.locals.userRole.permissions;
+    if(permissions.includes("roles_permissions")){
+        try {
         
-        const permissions = JSON.parse(req.body.permissions);
-
-        const updatedBy = {
-            account_id: res.locals.user.id,
-            updatedAt: new Date()
-        } 
-
-        let hasChanges = false; // cờ theo dõi thay đổi
-        for (const item of permissions) {
-            const role = await Role.findOne({ _id: item.id});
-
-            if(!checkArraysEqual(role.permissions,item.permissions)){
-                await Role.updateOne({ _id: item.id },{ 
-                    permissions: item.permissions,
-                    $push: {updatedBy: updatedBy}
-                });
-                hasChanges = true;
+            const permissions = JSON.parse(req.body.permissions);
+    
+            const updatedBy = {
+                account_id: res.locals.user.id,
+                updatedAt: new Date()
+            } 
+    
+            let hasChanges = false; // cờ theo dõi thay đổi
+            for (const item of permissions) {
+                const role = await Role.findOne({ _id: item.id});
+    
+                if(!checkArraysEqual(role.permissions,item.permissions)){
+                    await Role.updateOne({ _id: item.id },{ 
+                        permissions: item.permissions,
+                        $push: {updatedBy: updatedBy}
+                    });
+                    hasChanges = true;
+                }
             }
+    
+            // Gửi phản hồi sau khi hoàn tất cập nhật
+            if (hasChanges) {
+                req.flash("success", "Cập nhật phân quyền thành công!");
+            } else {
+                req.flash("warning", "Chưa có thay đổi!");
+            };
+    
+            res.redirect("back")
+    
+        } catch (error) {
+            req.flash("error","Cập nhật phân quyền thất bại!")
+            res.redirect("back")
         }
-
-        // Gửi phản hồi sau khi hoàn tất cập nhật
-        if (hasChanges) {
-            req.flash("success", "Cập nhật phân quyền thành công!");
-        } else {
-            req.flash("warning", "Chưa có thay đổi!");
-        };
-
-        res.redirect("back")
-
-    } catch (error) {
-        req.flash("error","Cập nhật phân quyền thất bại!")
-        res.redirect("back")
+    }else{
+        return;
     }
 }

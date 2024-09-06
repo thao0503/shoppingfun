@@ -35,8 +35,8 @@ block main
             .card-body 
                 .row 
                     .col-8
-                        if(userRole.permissions.includes("products_edit"))
-                                +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
+                        if (userRole.permissions.includes("products_edit") || userRole.permissions.includes("products_delete"))
+                            +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`, "products")
                     .col-4
                         if(userRole.permissions.includes("products_create"))
                             a(

@@ -30,8 +30,8 @@ block main
             .card-body 
                 .row 
                     .col-8
-                        if(userRole.permissions.includes("products-category_edit"))
-                            +form-change-multi(`${prefixAdmin}/products-category/change-multi?_method=PATCH`)
+                        if (userRole.permissions.includes("products-category_edit") || userRole.permissions.includes("products-category_delete"))
+                            +form-change-multi(`${prefixAdmin}/products-category/change-multi?_method=PATCH`, 'products-category')
                     .col-4
                         if(userRole.permissions.includes("products-category_create"))
                             a(

@@ -1,4 +1,4 @@
-mixin form-change-multi(path)
+mixin form-change-multi(path,entity)
     form(
                 action= path
                 method="POST"
@@ -8,10 +8,12 @@ mixin form-change-multi(path)
                     .form-group 
                         select(name="type" class="form-control")
                             option(disabled selected) -- Chọn hành động --
-                            option(value="active") Hoạt động
-                            option(value="inactive") Dừng hoạt động 
-                            option(value="delete-all") Xóa tất cả 
-                            option(value="change-position") Thay đổi vị trí
+                            if (userRole.permissions.includes(`${entity}_edit`))
+                                option(value="active") Hoạt động
+                                option(value="inactive") Dừng hoạt động 
+                                option(value="change-position") Thay đổi vị trí
+                            if (userRole.permissions.includes(`${entity}_delete`))
+                                option(value="delete-all") Xóa tất cả 
                     .form-group 
                         input(
                             type="text"
