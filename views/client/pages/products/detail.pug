@@ -1,29 +1,32 @@
 extends ../../layouts/default.pug
 
-block main 
-    .container.mt-5
-      .row
-       
-        .col-md-6
-          img(src= product.thumbnail)
+block main
+  .container.mt-5
+    .row
+      .col-md-6
+        .product-image
+          img(src=product.thumbnail, alt=product.title, class="img-fluid rounded")
 
-      
-        .col-md-6
-          h1.text-primary #{product.title}
-
-          p.text-muted
-          .price
-            h4.text-success Giá:
-            - let discountedPrice = product.price * (1 - product.discountPercentage / 100)
-            span#product-price= discountedPrice.toLocaleString() + " $"
-
-            del.text-danger.mr-2 Giá gốc: 
-            span#product-original-price #{product.price}$
-            span.badge.badge-success.ml-2 Giảm giá: #{product.discountPercentage} %
-
-          .quantity.mt-4
-            h4 Số lượng có sẵn: #{product.stock} 
+      .col-md-6
+        .product-details
+          h1.text-dark.mb-4 #{product.title}
           
-          .description.mt-5
-            h4 Mô tả sản phẩm
-            p #{product.description}
+          .price.mb-4
+            h4
+              span.text-success.font-weight-bold Giá khuyến mãi: 
+              - let discountedPrice = product.price * (1 - product.discountPercentage / 100)
+              span#product-price.text-success.font-weight-bold #{discountedPrice.toLocaleString()} $
+            
+            del.text-muted.mr-2 Giá gốc: 
+            span#product-original-price.text-danger.font-weight-normal #{product.price} $
+
+            span.badge.badge-success.ml-2 Giảm giá: #{product.discountPercentage}%
+
+
+          .quantity.mb-4
+            h4 Số lượng có sẵn: 
+            span.text-dark #{product.stock}
+
+          .description.mt-4
+            h4.mb-3 Mô tả sản phẩm
+            p.text-muted #{product.description}

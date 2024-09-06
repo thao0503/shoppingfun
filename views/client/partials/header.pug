@@ -2,18 +2,14 @@ include ../mixins/sub-menu.pug
 
 header.header
     .container
-        .row.align-items-center
-            .col-3
-                .inner-logo
-                    a(href="/")
-                        img(src="/images/Logo Shop.jpg" alt="Logo")
-
-            .col-9
-                .inner-menu
-                    ul
-                        li
-                            a(href="/") Trang chủ 
-                        li(class="sub-menu")
-                            - const path = "/products"
-                            a(href=path) Sản phẩm
-                                +sub-menu(categories,path)
+        .inner-logo
+            a(href="/")
+                img(src="/images/Logo Shop.jpg" alt="Logo")
+        .inner-menu
+            ul
+                li
+                    a(href="/") Trang chủ 
+                li(class="sub-menu")
+                    - const path = "/products"
+                    a(href=path) Sản phẩm
+                        +sub-menu(categories, path)
