@@ -72,12 +72,25 @@
     inline-size: 100%;
     aspect-ratio: 4/3;
     border-block-end: 1px solid #ddd;
+    position: relative;
 }
 
 .product-item .inner-image img {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
+}
+
+.product-item .inner-featured {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: green;
+    color: white;
+    padding: 3px 6px;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 8px;
 }
 
 .product-item .inner-content {

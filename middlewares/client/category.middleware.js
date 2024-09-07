@@ -6,7 +6,7 @@ module.exports.category = async (req, res, next) => {
         deleted: false
     });
 
-    const newCategories = createTree.tree(categories)
+    const newCategories = createTree.tree(categories,"","active")
 
     res.locals.categories = newCategories;
     next();
