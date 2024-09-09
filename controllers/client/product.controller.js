@@ -62,10 +62,22 @@ module.exports.detail = async (req, res) => {
         const find = {
             deleted: false,
             status: "active",
-            slug: req.params.slug
+            slug: req.params.productSlug
         } 
     
-        const product = await Product.findOne(find)
+        const product = await Product.findOne(find);
+
+        if(product.product_category_id){
+            const category = await productCategory.findOne({
+                _id: product.product_category_id,
+                status: "active",
+                deleted: false
+            });
+            product.category = category;
+        };
+
+        product.newPrice = productsHelper.newProductPrice(product);
+
         res.render("client/pages/products/detail.pug",{
             pageTitle: product.title,
             product: product
