@@ -1,6 +1,6 @@
 include ../mixins/sub-menu.pug
 
-header.header
+.header.header
     .container
         .inner-logo
             a(href="/")
@@ -13,3 +13,19 @@ header.header
                     - const path = "/products"
                     a(href=path) Sản phẩm
                         +sub-menu(categories, path)
+        .inner-search.ml-auto
+            form.form-inline(
+                action="/search"
+                method="GET"
+            )
+                .input-group
+                    input.form-control(
+                        type="text"
+                        placeholder="Nhập từ khóa"
+                        name="keyword"
+                        value=keyword
+                    )
+                    .input-group-append
+                        button.btn.btn-primary(
+                            type="submit"
+                        ) Tìm

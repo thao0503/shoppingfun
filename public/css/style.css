@@ -37,6 +37,21 @@
     text-decoration: none; 
 }
 
+.header .inner-search .form-control {
+    width: 200px;
+    margin-right: 0; 
+    border-radius: 0; 
+}
+
+.header .inner-search .btn-primary {
+    padding: 5px 15px;
+    margin-left: 0; 
+    border-radius: 0; 
+}
+
+.header .inner-search .input-group .input-group-append .btn {
+    margin-left: -1px; 
+}
 /* End header */
 
 /* Footer */
