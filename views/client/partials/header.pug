@@ -13,6 +13,8 @@ include ../mixins/sub-menu.pug
                     - const path = "/products"
                     a(href=path) Sản phẩm
                         +sub-menu(categories, path)
+                li 
+                    a(href="/cart")  Giỏ hàng(#{miniCart ? miniCart.totalQuantity : 0 }) 
         .inner-search.ml-auto
             form.form-inline(
                 action="/search"
@@ -29,3 +31,4 @@ include ../mixins/sub-menu.pug
                         button.btn.btn-primary(
                             type="submit"
                         ) Tìm
+            
