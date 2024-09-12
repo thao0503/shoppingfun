@@ -1,7 +1,10 @@
 extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
+include ../../mixins/alert.pug
+
 
 block main
+  +alert-success(3000)
   .product-detail 
     .container.my-5
       .row 
@@ -18,14 +21,14 @@ block main
 
           if(product.newPrice)
             div(class="inner-new-price") #{product.newPrice}$
-          
+
           if(product.price)
             div(class="inner-old-price") #{product.price}$
 
           if(product.discountPercentage)
             div(class="inner-percent") Giảm tới <span>#{product.discountPercentage}%</span>
 
-          
+
           if(product.stock)
             div(class="inner-stock") Còn lại <span>#{product.stock}</span> Sản phẩm
 
@@ -49,5 +52,5 @@ block main
     .container.my-5 
       .row 
         .col-12 
-         +box-head("Mô tả sản phẩm")
-         .inner-desc !{product.description}
+          +box-head("Mô tả sản phẩm")
+          .inner-desc !{product.description}

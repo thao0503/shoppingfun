@@ -4,6 +4,9 @@ const controller = require("../../controllers/client/cart.controller")
 
 router.get("/",controller.index);
 
-router.post("/add/:productId",controller.addPost);
+router.post("/add/:productId",controller.addProductPost);
+
+router.get("/delete/:productId",controller.deleteProduct);
+
 
 module.exports = router;
