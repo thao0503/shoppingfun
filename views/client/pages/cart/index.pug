@@ -39,7 +39,8 @@ block main
                                             name="quantity"
                                             value=product.quantity
                                             min="1"
-                                            data-item-id=""
+                                            max=product.productInfo.stock
+                                            product-id=product.product_id
                                             style="width: 60px"
                                         )
                                     td #{product.totalProductPrice}$
@@ -56,3 +57,4 @@ block main
 
                 else 
                     p(class="text-center") Chưa có sản phẩm nào trong giỏ hàng!
+    script(src="/js/cart.js") 

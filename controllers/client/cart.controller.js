@@ -15,7 +15,7 @@ module.exports.index = async (req, res) => {
         for (const item of cart.products) {
             const productInfo = await Product.findOne({
                 _id: item.product_id
-            }).select("title thumbnail price discountPercentage slug");
+            }).select("title thumbnail price discountPercentage slug stock");
 
             // Tính giá mới của mỗi sản phẩm
             const newPrice = productsHelper.newProductPrice(productInfo);
@@ -89,5 +89,26 @@ module.exports.deleteProduct = async (req, res) => {
     });
 
     req.flash("success", "Xóa sản phẩm thành công!")
+    res.redirect("back")
+};
+
+//[GET] /cart/update/:productId/:quantity
+module.exports.updateQuantity = async (req, res) => {
+
+    const cartId = req.cookies.cartId;
+    const productId = req.params.productId;
+    const quantity = req.params.quantity;
+
+    if(!isNaN(quantity)){
+        await Cart.updateOne({
+            _id: cartId,
+            "products.product_id": productId
+        }, {
+            $set: {
+                "products.$.quantity": quantity
+            }
+        });
+    }
+
     res.redirect("back")
 };
