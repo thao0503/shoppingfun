@@ -10,7 +10,7 @@ const cartMiddleware = require("../../middlewares/client/cart.middleware")
 module.exports = (app) => {
     app.use(categoryMiddleware.category);
 
-    app.use(cartMiddleware.cartId);
+    app.use(cartMiddleware.loadOrCreateCart);
 
     app.use("/",homeRoutes);
 
