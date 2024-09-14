@@ -6,10 +6,7 @@ const productsHelper = require("../../helpers/products")
 //[GET] /checkout
 module.exports.index = async (req, res) => {
 
-    const cartId = req.cookies.cartId;
-    const cart = await Cart.findOne({
-        _id: cartId
-    });
+    const cart = res.locals.miniCart;
 
     if (cart.products.length > 0) {
         for (const item of cart.products) {
@@ -37,11 +34,8 @@ module.exports.index = async (req, res) => {
 
 //[POST] /checkout/order
 module.exports.order = async (req, res) => {
-    const cartId = req.cookies.cartId;
     const userInfo = req.body;
-    const cart = await Cart.findOne({
-        _id: cartId
-    });
+    const cart = res.locals.miniCart;
 
     const products = [];
 
@@ -64,14 +58,14 @@ module.exports.order = async (req, res) => {
     }
 
     const order = new Order({
-        cart_id: cartId,
+        cart_id: cart.id,
         userInfo: userInfo,
         products: products
     });
     await order.save();
 
     await Cart.updateOne({
-        _id: cartId
+        _id: cart.id
     },{
         products: []
     });
