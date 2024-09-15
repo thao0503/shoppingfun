@@ -5,6 +5,13 @@ const checkArraysEqual = require("../../helpers/checkArraysEqual");
 
 // [GET] /admin/roles
 module.exports.index = async (req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("roles_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         let find = {
@@ -43,17 +50,23 @@ module.exports.index = async (req, res) => {
         req.flash("error","yêu cầu của bạn chưa thể thục hiện");
         res.redirect(`${systemConfig.prefixAdmin}/roles`);
     }
-    
-}
+};
 
 //[GET] /admin/roles/create
 module.exports.create = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("roles_create")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     res.render("admin/pages/roles/create",{
         pageTitle: "Tạo nhóm quyền"
     }
     )
-}
+};
 
 //[POST] /admin/roles/create
 module.exports.createPost = async(req, res) => {
@@ -76,6 +89,13 @@ module.exports.createPost = async(req, res) => {
 
 //[GET] /admin/roles/edit/:id
 module.exports.edit = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("roles_edit")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const find = {
@@ -96,8 +116,7 @@ module.exports.edit = async(req, res) => {
         req.flash("error","Không tìm thấy nhóm quyền!")
         res.redirect(`${systemConfig.prefixAdmin}/roles`);
     }
-    
-}
+};
 
 //[PATCH] /admin/roles/edit/:id
 module.exports.editPatch = async(req, res) => {
@@ -125,6 +144,13 @@ module.exports.editPatch = async(req, res) => {
 
 //[GET] /admin/roles/detail/:id
 module.exports.detail = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("roles_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const find = {
@@ -164,8 +190,7 @@ module.exports.detail = async(req, res) => {
         req.flash("error","Không thể thực hiện yêu cầu của bạn!")
         res.redirect(`${systemConfig.prefixAdmin}/roles`);
     }
-
-}
+};
 
 //[DELETE] /admin/roles/delete/:id
 module.exports.deleteItem = async (req, res) => {
@@ -194,6 +219,13 @@ module.exports.deleteItem = async (req, res) => {
 
 //[GET] /admin/roles/permissions
 module.exports.permissions = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("roles_permissions")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const find = {
@@ -213,8 +245,7 @@ module.exports.permissions = async(req, res) => {
         req.flash("error","Không thể thực hiện yêu cầu của bạn!")
         res.redirect(`${systemConfig.prefixAdmin}/roles`);
     }
-
-}
+};
 
 //[PATCH] /admin/roles/permissions
 module.exports.permissionsPatch = async(req, res) => {
@@ -259,4 +290,4 @@ module.exports.permissionsPatch = async(req, res) => {
     }else{
         return;
     }
-}
+};

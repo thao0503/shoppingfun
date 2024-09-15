@@ -8,6 +8,14 @@ const searchHelpers = require("../../helpers/search");
 
 //[GET] /admin/products-category
 module.exports.index = async (req, res) => {
+     //Kiểm tra quyền truy cập
+     const permissions = res.locals.userRole.permissions;
+     if (!permissions.includes("products-category_view")) {
+         return res.status(403).render("admin/errors/403.pug", {
+             message: "Bạn không có quyền truy cập vào trang này."
+         });
+     };
+ 
     try {
         
         let find = {
@@ -72,6 +80,13 @@ module.exports.index = async (req, res) => {
 
  //[GET] /admin/products-category/create
 module.exports.create = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products-category_create")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     let find = {
         deleted: false
@@ -116,6 +131,13 @@ module.exports.createPost = async(req, res) => {
 
  //[GET] /admin/products-category/edit/:id
  module.exports.edit = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products-category_edit")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const id = req.params.id;
@@ -176,6 +198,14 @@ module.exports.editPatch = async(req, res) => {
 
 //[GET] /admin/products-category/detail/:id
 module.exports.detail = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products-category_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
+    
     try {
         const find = {
             deleted: false,

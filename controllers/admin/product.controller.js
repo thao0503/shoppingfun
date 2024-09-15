@@ -10,12 +10,18 @@ const createTree = require("../../helpers/createTree")
 
 //[GET] /admin/products
 module.exports.index = async (req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
-
         // Bộ lọc 
-    const filterStatus = filterStatusHelpers(req.query);
-    // Kết thúc Bộ lọc 
+        const filterStatus = filterStatusHelpers(req.query);
+        // Kết thúc Bộ lọc 
 
         let find = {
             deleted: false
@@ -36,7 +42,6 @@ module.exports.index = async (req, res) => {
 
         // Phân trang
         const countProducts = await Product.countDocuments(find);
-
         let objectPagination = paginationHelper(
             {
                 currentPage: 1,
@@ -49,14 +54,12 @@ module.exports.index = async (req, res) => {
 
         // Sort
         let sort = {}
-
         if(req.query.sortKey && req.query.sortValue ){
             sort[req.query.sortKey] =  req.query.sortValue
         }else{
             sort.position = "desc"
         }
         //End Sort
-
 
         const products = await Product.find(find)
         .sort(sort)
@@ -86,7 +89,6 @@ module.exports.index = async (req, res) => {
 
         };
         
-
         res.render("admin/pages/products/index.pug",{
             pageTitle: "Danh sách sản phẩm",
             products: products,
@@ -191,7 +193,7 @@ module.exports.changeMulti = async (req, res) => {
     }
 
     res.redirect("back");
-}
+};
 
 //[DELETE] /admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
@@ -212,10 +214,17 @@ module.exports.deleteItem = async (req, res) => {
     }else{
         return;
     }
-}
+};
 
 //[GET] /admin/products/create
 module.exports.create = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products_create")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     let find = {
         deleted: false
@@ -229,9 +238,8 @@ module.exports.create = async(req, res) => {
         pageTitle: "Thêm mới sản phẩm",
         category: newCategory
     }
-        
-    )
-}
+    );
+};
 
 //[POST] /admin/products/create
 module.exports.createPost = async(req, res) => {
@@ -260,10 +268,17 @@ module.exports.createPost = async(req, res) => {
     }else{
         return;
     }
-}
+};
 
 //[GET] /admin/products/edit/:id
 module.exports.edit = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products_edit")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const find = {
@@ -286,16 +301,13 @@ module.exports.edit = async(req, res) => {
             pageTitle: "Chỉnh sửa sản phẩm",
             product: product,
             category: newCategory
-        }
-            
-        )
+        }  
+        );
     } catch (error) {
-
         req.flash("error","Không tìm thấy sản phẩm")
         res.redirect(`${systemConfig.prefixAdmin}/products`);
-    }
-    
-}
+    };
+};
 
 //[PATCH] /admin/products/edit/:id
 module.exports.editPatch = async(req, res) => {
@@ -324,10 +336,17 @@ module.exports.editPatch = async(req, res) => {
     }else{
         return;
     }
-}
+};
 
 //[GET] /admin/products/detail/:id
 module.exports.detail = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("products_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         const find = {
@@ -368,4 +387,4 @@ module.exports.detail = async(req, res) => {
         req.flash("error","Không tìm thấy sản phẩm")
         res.redirect(`${systemConfig.prefixAdmin}/products`);
     }
-}
+};

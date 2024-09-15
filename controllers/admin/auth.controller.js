@@ -14,7 +14,9 @@ module.exports.login = async (req, res) => {
     }
 
     const user = await Account.findOne({
-        token: token
+        token: token,
+        status: "active",
+        deleted: false
     });
 
     if(user){

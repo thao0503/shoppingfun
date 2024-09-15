@@ -6,6 +6,13 @@ const md5 = require("md5")
 
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("accounts_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     try {
         let find = {
@@ -45,7 +52,7 @@ module.exports.index = async (req, res) => {
 
                 updatedBy.userFullName = updater.fullName;
             };
-            // kKết thúc lấy thông tin người cập nhật gần nhất
+            // Kết thúc lấy thông tin người cập nhật gần nhất
 
         };    
         res.render("admin/pages/accounts/index.pug",{
@@ -54,12 +61,19 @@ module.exports.index = async (req, res) => {
         });
     } catch (error) {
         req.flash("error","Yêu cầu của bạn chưa thể thục hiện");
-        res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+        res.redirect(`back`);
     }
 };
 
 //[GET] /admin/accounts/create
 module.exports.create = async(req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("accounts_create")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
 
     const roles = await Role.find({
         deleted: false
@@ -105,6 +119,14 @@ module.exports.createPost = async(req, res) => {
 
 //[GET] /admin/accounts/edit/:id
 module.exports.edit = async(req,res) => {
+     //Kiểm tra quyền truy cập
+     const permissions = res.locals.userRole.permissions;
+     if (!permissions.includes("accounts_edit")) {
+         return res.status(403).render("admin/errors/403.pug", {
+             message: "Bạn không có quyền truy cập vào trang này."
+         });
+     };
+ 
     try {
         const find = {
             _id: req.params.id,
@@ -172,6 +194,14 @@ module.exports.editPatch = async (req, res) => {
 
 //[GET] /admin/accounts/detail/:id
 module.exports.detail = async(req,res) => {
+     //Kiểm tra quyền truy cập
+     const permissions = res.locals.userRole.permissions;
+     if (!permissions.includes("accounts_view")) {
+         return res.status(403).render("admin/errors/403.pug", {
+             message: "Bạn không có quyền truy cập vào trang này."
+         });
+     };
+ 
     try {
         const find = {
             _id: req.params.id,
