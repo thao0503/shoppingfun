@@ -15,10 +15,14 @@ include ../mixins/sub-menu.pug
                         +sub-menu(categories, path)
                 li 
                     a(href="/cart")  Giỏ hàng(#{miniCart ? miniCart.totalQuantity : 0 }) 
-                li 
-                    a(href="/user/login") Đăng nhập
-                li 
-                    a(href="/user/register") Đăng ký
+                if(user)
+                    li 
+                        a(href="/user/logout") Đăng xuất
+                else
+                    li 
+                        a(href="/user/login") Đăng nhập
+                    li 
+                        a(href="/user/register") Đăng ký
         .inner-search.ml-auto
             form.form-inline(
                 action="/search"
