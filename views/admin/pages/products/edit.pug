@@ -111,7 +111,7 @@ block main
                     upload-image-input
                 )
                 div(class="image-preview-container"
-                    style="display: block"
+                    style= product.thumbnail ? 'display: block' : 'display: none'
                     )
                     img(src=product.thumbnail
                         upload-image-preview 

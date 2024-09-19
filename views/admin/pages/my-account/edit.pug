@@ -62,7 +62,7 @@ block main
                 upload-image-input
             )
             div(class="image-preview-container"
-                style="display: block"
+                style= user.avatar ? 'display: block' : 'display: none'
                 )
                 img(src=user.avatar
                     upload-image-preview 

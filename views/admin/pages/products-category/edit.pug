@@ -58,7 +58,7 @@ block main
                     upload-image-input
                 )
                 div(class="image-preview-container"
-                    style="display: block"
+                    style= data.thumbnail ? 'display: block' : 'display: none'
                     )
                     img(src=data.thumbnail
                         upload-image-preview 

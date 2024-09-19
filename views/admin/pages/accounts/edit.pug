@@ -66,8 +66,8 @@ block main
                         upload-image-input
                     )
                     div(class="image-preview-container"
-                        style="display: block"
-                        )
+                        style= account.avatar ? 'display: block' : 'display: none'
+                    )
                         img(src=account.avatar
                             upload-image-preview 
                             alt=account.fullName

@@ -1,2 +1,16 @@
-footer.footer 
-  | Copyright 2023
+footer.footer.bg-dark.text-white.py-4
+  .container
+    .row
+      .col-md-6
+        h2 #{generalSetting.websiteName}
+        p &copy; 2024 #{generalSetting.copyright}. All rights reserved.
+      .col-md-6
+        p 
+          strong Địa chỉ: 
+          | #{generalSetting.address}
+        p 
+          strong Số điện thoại: 
+          | #{generalSetting.phone}
+        p 
+          strong Email: 
+          | #{generalSetting.email}
