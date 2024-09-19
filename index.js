@@ -46,6 +46,9 @@ app.use(express.static(`${__dirname}/public`));
 //Routes
 routeAdmin(app);
 route(app);
+app.get("*",(req, res) => {
+    res.render("client/pages/errors/404.pug");
+});
 
 app.listen(port,()=>{
     console.log(`App listening on port ${port}`);
