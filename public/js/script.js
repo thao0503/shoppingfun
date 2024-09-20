@@ -13,3 +13,17 @@ if(showAlert){
     })
 }
 // End Show alert 
+
+// Search
+const formSearch = document.getElementById('form-search');
+if(formSearch){
+    keywordInput = formSearch.querySelector('input[name="keyword"]');
+    formSearch.addEventListener("submit", (event) => {
+        if (!keywordInput.value.trim()) { 
+            event.preventDefault();
+
+            history.replaceState(null, '', window.location.href);
+        };
+    });
+};
+// End seatch

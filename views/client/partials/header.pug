@@ -17,7 +17,7 @@ header.header
             a.nav-link(href="/products") Sản phẩm
             +sub-menu(categories, "/products")
         
-        form.form-inline.mx-auto(action="/search" method="GET")
+        form.form-inline.mx-auto#form-search(action="/search" method="GET")
           .input-group
             input.form-control.py-2.border-right-0.border(type="search" placeholder="Tìm kiếm..." name="keyword" value=keyword)
             span.input-group-append
