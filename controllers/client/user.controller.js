@@ -174,3 +174,33 @@ module.exports.resetPasswordPost = async (req, res) => {
 
    res.redirect("/")    
 };
+
+// [GET] /user/profile
+module.exports.profile = (req, res) => {
+    const user = res.locals.user;
+
+    if(!user){
+        res.redirect("/user/login");
+        return;
+    }
+
+    res.render("client/pages/user/profile.pug",{
+        pageTitle: "Thông tin cá nhân"
+    });
+};
+
+// [PATCH] /user/profile
+module.exports.profilePatch = async (req, res) => {
+    const user = res.locals.user;
+    
+    if(user){
+        await User.updateOne({
+            _id: user.id
+        },req.body);
+        req.flash("success","Cập nhật thông tin thành công!")
+     }else{
+        req.flash("error","Cập nhật thông tin thất bại!")
+     }
+    
+    res.redirect("back")
+};

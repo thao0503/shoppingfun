@@ -1,0 +1,65 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+    +alert-success(5000)
+    +alert-error(5000)
+
+    div(class="container")
+        h1 Thông tin cá nhân
+
+        form(action="/user/profile?_method=PATCH", method="POST", enctype="multipart/form-data")
+            div(class="row")
+                div(class="col-md-8")
+                    div(class="form-group")
+                        label(for="fullName") Họ và tên
+                        input(
+                            id="name"
+                            class="form-control"
+                            type="text"
+                            name="fullName"
+                            value=user.fullName
+                        )
+
+                    div(class="form-group")
+                        label(for="email") Email
+                        div(class="d-flex align-items-center")
+                        input(
+                            id="email"
+                            class="form-control"
+                            type="email"
+                            name="email"
+                            value=user.email
+                            placeholder="Chưa có email"
+                        )
+
+                    div(class="form-group")
+                        label(for="phone") Số điện thoại
+                        div(class="d-flex align-items-center")
+                        input(
+                            id="phone"
+                            class="form-control"
+                            type="tel", name="phone"
+                            value=user.phone
+                        )
+
+                    div(class="form-group")
+                        label(for="address") Địa chỉ
+                        div(class="d-flex align-items-center")
+                        input(id="address"
+                            class="form-control"
+                            type="text"
+                            name="address"
+                            value=user.address
+                        )
+
+                    button(class="btn btn-primary", type="submit") Lưu
+
+                div(class="col-md-4")
+                    div(class="profile-image")
+                        img(class="img-fluid", src=(user.avatar ? user.avatar : "https://res.cloudinary.com/di57unjti/image/upload/v1726933905/dplnfu8noqzwmbx9gpqj.jpg"), alt="Profile Picture")
+                        div(class="mt-2")
+                            label(for="avatar") Ảnh đại diện
+                            input(id="avatar", type="file", name="avatar")
+
+    script(src="/js/user.js") 

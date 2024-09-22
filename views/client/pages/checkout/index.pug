@@ -48,6 +48,7 @@ block main
                                     class="form-control"
                                     id="fullName"
                                     name="fullName"
+                                    value = ( user ? user.fullName : "" )
                                     required
                                 )
                             div(class="form-group")
@@ -57,6 +58,7 @@ block main
                                     class="form-control"
                                     id="phone"
                                     name="phone"
+                                    value = ( user ? user.phone : "" )
                                     required
                                 )
                             div(class="form-group")
@@ -66,6 +68,7 @@ block main
                                     class="form-control"
                                     id="address"
                                     name="address"
+                                    value = ( user ? user.address : "" )
                                     required
                                 )
                             div(class="form-group")
@@ -73,8 +76,6 @@ block main
                                     type="submit"
                                     class="btn btn-success btn-block"
                                 ) Đặt hàng
-                            
-
                 else 
                     p(class="text-center") Chưa có sản phẩm nào trong giỏ hàng!
                     
