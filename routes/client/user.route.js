@@ -36,4 +36,6 @@ router.patch("/profile",
     uploadCloud.uploadCloud,
     controller.profilePatch);
 
+router.get("/orders", controller.orderManagement)
+
 module.exports = router;

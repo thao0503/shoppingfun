@@ -58,6 +58,7 @@ module.exports.order = async (req, res) => {
     }
 
     const order = new Order({
+        user_id: res.locals.user.id,
         cart_id: cart.id,
         userInfo: userInfo,
         products: products

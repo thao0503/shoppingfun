@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-    // user_id: String,
+    user_id: String,
     cart_id: String,
     userInfo: {
         fullName: String,
@@ -15,7 +15,11 @@ const orderSchema = new mongoose.Schema({
             price: Number,
             discountPercentage: Number
         }
-    ],
+    ], 
+    status: {
+        type: String,
+        default: "pending"
+    },
     deleted: {
         type: Boolean,
         default: false

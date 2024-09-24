@@ -1,0 +1,48 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block main 
+    .container.mt-4
+        +box-head("Quản lý đơn hàng") 
+
+        ul.nav.nav-tabs.mb-3
+            li.nav-item
+                a.nav-link(class=!status  ? 'active' : '' href="/user/orders") Tất cả
+            li.nav-item
+                a.nav-link(class=status === 'pending' ? 'active' : '' href="?status=pending") Đợi xác nhận
+            li.nav-item
+                a.nav-link(class=status === 'shipping' ? 'active' : '' href="?status=shipping") Vận chuyển
+            li.nav-item
+                a.nav-link(class=status === 'completed' ? 'active' : '' href="?status=completed") Hoàn thành
+            li.nav-item
+                a.nav-link(class=status === 'cancelled' ? 'active' : '' href="?status=cancelled") Đã hủy
+
+        table.table.table-striped
+            thead
+                tr
+                    th Mã đơn hàng
+                    th Sản phẩm
+                    th Tổng tiền
+                    th Trạng thái
+            tbody
+                each order in orders
+                    tr
+                        td= order.id
+                        td
+                            ul.list-unstyled.product-list
+                                each product in order.products
+                                    li
+                                    strong #{product.productInfo.title}
+                                    br
+                                    |X#{product.quantity} #{product.newPrice}$
+                        td #{order.totalOrderPrice}$
+                        td
+                            case order.status
+                                when 'pending'
+                                    span.badge.badge-warning Đợi xác nhận
+                                when 'shipping'
+                                    span.badge.badge-primary Vận chuyển
+                                when 'completed'
+                                    span.badge.badge-success Hoàn thành
+                                when 'cancelled'
+                                    span.badge.badge-danger Đã hủy
