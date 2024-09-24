@@ -1,0 +1,61 @@
+extends ../../layouts/default.pug
+
+block main
+
+    .container-fluid
+        .row
+            .col-12
+                h1 Danh sách đơn hàng
+                .card.mb-3
+                    .card-header
+                        h5 Danh sách
+
+                    .card-body
+                        table.table.table-hover.table-sm
+                            thead
+                                tr
+                                    th
+                                        input(type="checkbox" name="checkall")
+                                    th STT
+                                    th Khách hàng
+                                    th Điện thoại
+                                    th Sản phẩm
+                                    th Tổng tiền
+                                    th Trạng thái
+                                    th Hành động
+
+                            tbody
+                                each order, index in orders
+                                    tr
+                                        td
+                                            input(
+                                                type="checkbox"
+                                                name="id"
+                                                value=order.id
+                                            )
+                                        td #{index + 1}
+                                        td= order.userInfo.fullName
+                                        td= order.userInfo.phone
+                                        td
+                                            ul.list-unstyled.product-list
+                                                each product in order.products
+                                                    li
+                                                    strong #{product.productInfo.title}
+                                                    br
+                                                    |X #{product.quantity} #{product.newPrice}$ 
+                                        td #{order.totalOrderPrice}
+                                        td
+                                            case order.status
+                                                when 'pending'
+                                                    span.badge.badge-warning Đợi xác nhận
+                                                when 'shipping'
+                                                    span.badge.badge-primary Vận chuyển
+                                                when 'completed'
+                                                    span.badge.badge-success Hoàn thành
+                                                when 'cancelled'
+                                                    span.badge.badge-danger Đã hủy
+                                        td
+                                            a(
+                                                href=`${prefixAdmin}/orders/detail/${order.id}`
+                                                class="btn btn-secondary btn-sm"
+                                            ) Chi tiết
