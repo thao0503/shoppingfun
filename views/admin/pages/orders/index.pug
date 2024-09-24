@@ -11,6 +11,18 @@ block main
                         h5 Danh sách
 
                     .card-body
+                        ul.nav.nav-tabs.mb-3
+                            li.nav-item
+                                a.nav-link(class=!status ? 'active text-primary' : 'text-dark', href="/admin/orders") Tất cả
+                            li.nav-item
+                                a.nav-link(class=status === 'pending' ? 'active text-primary' : 'text-dark', href="?status=pending") Đợi xác nhận
+                            li.nav-item
+                                a.nav-link(class=status === 'shipping' ? 'active text-primary' : 'text-dark', href="?status=shipping") Vận chuyển
+                            li.nav-item
+                                a.nav-link(class=status === 'completed' ? 'active text-primary' : 'text-dark', href="?status=completed") Hoàn thành
+                            li.nav-item
+                                a.nav-link(class=status === 'cancelled' ? 'active text-primary' : 'text-dark', href="?status=cancelled") Đã hủy
+
                         table.table.table-hover.table-sm
                             thead
                                 tr

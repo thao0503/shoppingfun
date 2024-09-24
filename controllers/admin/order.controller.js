@@ -8,6 +8,13 @@ module.exports.index = async (req, res) => {
         deleted: false
     };
 
+    // Lọc đơn hàng theo trạng thái
+    const  status  = req.query.status;
+    if(status){
+        find.status = status;
+    };
+
+
     const orders = await Order.find(find).lean();
 
     //Lấy thông tin tất cả sản phẩm trong các đơn hàng
@@ -30,7 +37,6 @@ module.exports.index = async (req, res) => {
             };
         });
 
-        console.log(processedProducts);
         const totalOrderPrice = processedProducts.reduce((sum, product) => sum + product.totalProductPrice, 0);
 
         return {
@@ -45,7 +51,8 @@ module.exports.index = async (req, res) => {
 
     res.render("admin/pages/orders/index.pug",{
         pageTitle: "Quản lý đơn hàng",
-        orders: processedOrders
+        orders: processedOrders,
+        status: status
     }
     )
 }
