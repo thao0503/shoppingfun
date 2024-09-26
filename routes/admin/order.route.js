@@ -6,4 +6,6 @@ router.get("/",controller.index);
 
 router.get("/detail/:orderId",controller.detail);
 
+router.patch("/update-status/:orderId",controller.updateStatus);
+
 module.exports = router;

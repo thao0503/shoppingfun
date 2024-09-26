@@ -1,7 +1,12 @@
 extends ../../layouts/default.pug
 include ../../mixins/moment.pug
+include ../../mixins/alert.pug
+
 
 block main
+
+    +alert-success("5000")
+    +alert-error("5000")
     .container.my-3 
         .row 
             .col-12 
@@ -53,12 +58,16 @@ block main
                             tr
                                 td Người cập nhật cuối
                                 td
-                                    b #{order.updatedBy ? order.updatedBy.fullName : 'N/A'}
+                                    - const updatedBy = order.updatedBy.slice(-1)[0]
+                                    b #{ updatedBy ? updatedBy.userFullName : 'N/A'}
                             tr
                                 td Thời gian cập nhật cuối
                                 td
-                                    b 
-                                        +formatDateTime(order.updatedAt) 
+                                    if order.updatedBy.length > 0
+                                        b 
+                                            +formatDateTime( order.updatedBy.slice(-1)[0].updatedAt)
+                                    else 
+                                        b Chưa có cập nhật
                             tr
                                 td Cập nhật trạng thái
                                 td
@@ -66,8 +75,8 @@ block main
                                         select(name="status" class="form-control")
                                             option(value="pending" selected=order.status === "pending") Đợi xác nhận 
                                             option(value="confirmed" selected=order.status === "confirmed") Đã xác nhận
-                                            option(value="shipping" selected=order.status === "shipping") Đang giao hàng
-                                            option(value="delivered" selected=order.status === "completed") Hoàn thành
+                                            option(value="shipping" selected=order.status === "shipping") Vận chuyển
+                                            option(value="completed" selected=order.status === "completed") Hoàn thành
                                             option(value="cancelled" selected=order.status === "cancelled") Đã hủy
                                         button(type="submit" class="btn btn-primary mt-2") Cập nhật
 

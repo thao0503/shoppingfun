@@ -20,17 +20,23 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default: "pending"
     },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedBy: [
+        {
+            account_id: String,
+            updatedAt: Date
+        }
+    ],
     deleted: {
         type: Boolean,
         default: false
     },
     deletedAt: Date
-},
-{
-    timestamps: true
-}
-);
+});
 
-const Cart = mongoose.model('Order', orderSchema, "orders");
+const Order = mongoose.model('Order', orderSchema, "orders");
 
-module.exports = Cart;
+module.exports = Order;

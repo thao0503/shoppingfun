@@ -1,6 +1,10 @@
-const Order = require("../../models/order.model")
-const Product = require("../../models/product.model")
-const productsHelper = require("../../helpers/products")
+const Order = require("../../models/order.model");
+const Product = require("../../models/product.model");
+const Account = require("../../models/account.model");
+const mongoose = require('mongoose');
+const productsHelper = require("../../helpers/products");
+const systemConfig = require("../../config/system")
+
 
 //[GET] /orders
 module.exports.index = async (req, res) => {
@@ -64,7 +68,8 @@ module.exports.detail = async (req,res) => {
         const order = await Order.findOne({
             _id: orderId
         });
-    
+        
+        // Lấy thông tin về sản phẩm trong đơn hàng
         for (const product of order.products) {
             const productInfo = await Product.findOne({
                 _id: product.product_id
@@ -76,12 +81,86 @@ module.exports.detail = async (req,res) => {
         };
     
         order.totalOrderPrice = order.products.reduce((sum,product) => sum + product.totalProductPrice ,0);
-    
+
+         // Lấy thông tin người cập nhật gần nhất
+         if(order.updatedBy.length > 0){
+            const updatedBy = order.updatedBy.slice(-1)[0];
+            if(updatedBy){
+                const userUpdate = await Account.findOne({
+                    _id: updatedBy.account_id
+                });
+   
+                updatedBy.userFullName = userUpdate.fullName;
+            };
+         };
+         
         res.render("admin/pages/orders/detail.pug",{
             pageTitle: "Chi tiết đơn hàng",
             order: order
         });
     } catch (error) {
-        res.redirect("/");
+        res.redirect(`${systemConfig.prefixAdmin}/orders`);
+    }
+};
+
+//[PATCH] /orders/update-status/:orderId
+module.exports.updateStatus = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const status = req.body.status;
+        const orderId = req.params.orderId;
+
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        };
+
+        const order = await Order.findById(orderId).session(session);
+        if (!order) {
+            throw new Error('Không tìm thấy đơn hàng');
+        }
+
+        const oldStatus = order.status;
+        
+        // Cập nhật số lượng sản phẩm
+        if (status === 'confirmed' && oldStatus === 'pending') {
+            // Giảm số lượng sản phẩm khi xác nhận đơn hàng
+            for (const item of order.products) {
+                const product = await Product.findById(item.product_id).session(session);
+                if (!product || product.stock < item.quantity) {
+                    throw new Error(`Không đủ số lượng cho sản phẩm ${product ? product.name : 'không xác định'}`);
+                }
+                await Product.updateOne(
+                    { _id: item.product_id },
+                    { $inc: { stock: -item.quantity } }
+                ).session(session);
+            };
+        } else if (status === 'cancelled' && ['pending', 'confirmed','shipping'].includes(oldStatus)) {
+            // Khôi phục số lượng sản phẩm khi hủy đơn hàng
+            for (const item of order.products) {
+                await Product.updateOne(
+                    { _id: item.product_id },
+                    { $inc: { stock: item.quantity } }
+                ).session(session);
+            };
+        };
+
+        // Cập nhật trạng thái đơn hàng
+        order.status = status;
+        order.updatedBy.push(updatedBy);
+        await order.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        req.flash("success", "Cập nhật đơn hàng thành công!");
+        res.redirect("back");
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        req.flash("error","Có lỗi xảy ra khi cập nhật đơn hàng");
+        res.redirect("back");
     }
 };
