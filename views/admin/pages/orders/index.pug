@@ -13,15 +13,17 @@ block main
                     .card-body
                         ul.nav.nav-tabs.mb-3
                             li.nav-item
-                                a.nav-link(class=!status ? 'active text-primary' : 'text-dark', href="/admin/orders") Tất cả
+                                a.nav-link.font-weight-bold(class=!status ? 'active text-primary' : 'text-dark', href="/admin/orders") Tất cả
                             li.nav-item
-                                a.nav-link(class=status === 'pending' ? 'active text-primary' : 'text-dark', href="?status=pending") Đợi xác nhận
+                                a.nav-link.font-weight-bold(class=status === 'pending' ? 'active text-primary' : 'text-dark', href="?status=pending") Đợi xác nhận
                             li.nav-item
-                                a.nav-link(class=status === 'shipping' ? 'active text-primary' : 'text-dark', href="?status=shipping") Vận chuyển
+                                a.nav-link.font-weight-bold(class=status === 'confirmed' ? 'active text-primary' : 'text-dark', href="?status=confirmed") Đã xác nhận
                             li.nav-item
-                                a.nav-link(class=status === 'completed' ? 'active text-primary' : 'text-dark', href="?status=completed") Hoàn thành
+                                a.nav-link.font-weight-bold(class=status === 'shipping' ? 'active text-primary' : 'text-dark', href="?status=shipping") Vận chuyển
                             li.nav-item
-                                a.nav-link(class=status === 'cancelled' ? 'active text-primary' : 'text-dark', href="?status=cancelled") Đã hủy
+                                a.nav-link.font-weight-bold(class=status === 'completed' ? 'active text-primary' : 'text-dark', href="?status=completed") Hoàn thành
+                            li.nav-item
+                                a.nav-link.font-weight-bold(class=status === 'cancelled' ? 'active text-primary' : 'text-dark', href="?status=cancelled") Đã hủy
 
                         table.table.table-hover.table-sm
                             thead
@@ -60,6 +62,8 @@ block main
                                             case order.status
                                                 when 'pending'
                                                     span.badge.badge-warning Đợi xác nhận
+                                                when 'confirmed'
+                                                    span.badge.badge-info Đã xác nhận
                                                 when 'shipping'
                                                     span.badge.badge-primary Vận chuyển
                                                 when 'completed'
