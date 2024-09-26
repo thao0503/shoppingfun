@@ -55,4 +55,33 @@ module.exports.index = async (req, res) => {
         status: status
     }
     )
-}
+};
+
+//[GET] /orders/detail/:orderId
+module.exports.detail = async (req,res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await Order.findOne({
+            _id: orderId
+        });
+    
+        for (const product of order.products) {
+            const productInfo = await Product.findOne({
+                _id: product.product_id
+            }).select("title thumbnail").lean();
+    
+            product.productInfo = productInfo;
+            product.newPrice = productsHelper.newProductPrice(product);
+            product.totalProductPrice = product.quantity * product.newPrice;
+        };
+    
+        order.totalOrderPrice = order.products.reduce((sum,product) => sum + product.totalProductPrice ,0);
+    
+        res.render("admin/pages/orders/detail.pug",{
+            pageTitle: "Chi tiết đơn hàng",
+            order: order
+        });
+    } catch (error) {
+        res.redirect("/");
+    }
+};
