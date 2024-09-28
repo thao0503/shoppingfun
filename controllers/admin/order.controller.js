@@ -5,9 +5,16 @@ const mongoose = require('mongoose');
 const productsHelper = require("../../helpers/products");
 const systemConfig = require("../../config/system")
 
-
 //[GET] /orders
 module.exports.index = async (req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("orders_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
+
     const find = {
         deleted: false
     };
@@ -63,6 +70,14 @@ module.exports.index = async (req, res) => {
 
 //[GET] /orders/detail/:orderId
 module.exports.detail = async (req,res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("orders_view")) {
+        return res.status(403).render("admin/errors/403.pug", {
+            message: "Bạn không có quyền truy cập vào trang này."
+        });
+    };
+
     try {
         const orderId = req.params.orderId;
         const order = await Order.findOne({
@@ -105,6 +120,12 @@ module.exports.detail = async (req,res) => {
 
 //[PATCH] /orders/update-status/:orderId
 module.exports.updateStatus = async (req, res) => {
+    //Kiểm tra quyền truy cập
+    const permissions = res.locals.userRole.permissions;
+    if (!permissions.includes("orders_edit")) {
+       return;
+    };
+    
     const session = await mongoose.startSession();
     session.startTransaction();
 
