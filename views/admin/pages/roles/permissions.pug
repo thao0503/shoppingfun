@@ -139,7 +139,7 @@ block main
                             td(class="text-center")
                                 input(type="checkbox")
 
-                    //- Tài khoản
+                    //- Cài đặt chung
                     tr 
                         td(colspan="4")
                             b Cài đặt chung
@@ -154,6 +154,21 @@ block main
                             td(class="text-center")
                                 input(type="checkbox")
 
+                    //- Đơn hàng
+                    tr 
+                        td(colspan="4")
+                            b Đơn hàng
+                    tr(data-name="orders_view")
+                        td Xem 
+                        each item in roles 
+                            td(class="text-center")
+                                input(type="checkbox")
+                    tr(data-name="orders_edit")
+                        td Chỉnh sửa
+                        each item in roles 
+                            td(class="text-center")
+                                input(type="checkbox")
+                    
         form(
             id="form-change-permissions"
             method="POST"

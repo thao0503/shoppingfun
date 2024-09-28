@@ -9,17 +9,18 @@
             if(userRole.permissions.includes("products-category_view"))
                 li 
                     a(href=`${prefixAdmin}/products-category`) Danh mục sản phẩm 
+            if(userRole.permissions.includes("orders_view"))
+                li 
+                    a(href=`${prefixAdmin}/orders`) Quản lý đơn hàng
+            if(userRole.permissions.includes("accounts_view"))
+                li 
+                    a(href=`${prefixAdmin}/accounts`) Danh sách tài khoản
             if(userRole.permissions.includes("roles_view"))
                 li 
                     a(href=`${prefixAdmin}/roles`) Nhóm quyền
             if(userRole.permissions.includes("roles_permissions"))
                 li 
                     a(href=`${prefixAdmin}/roles/permissions`) Phân quyền 
-            if(userRole.permissions.includes("accounts_view"))
-                li 
-                    a(href=`${prefixAdmin}/accounts`) Danh sách tài khoản
-            li 
-                a(href=`${prefixAdmin}/orders`) Quản lý đơn hàng
             if(userRole.permissions.includes("general-settings_view"))
                 li 
                     a(href=`${prefixAdmin}/settings/general`) Cài đặt chung
