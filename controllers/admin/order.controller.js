@@ -119,7 +119,7 @@ module.exports.detail = async (req,res) => {
 };
 
 //[PATCH] /orders/update-status/:orderId
-module.exports.updateStatus = async (req, res) => {
+module.exports.updateStatusOrder = async (req, res) => {
     //Kiểm tra quyền truy cập
     const permissions = res.locals.userRole.permissions;
     if (!permissions.includes("orders_edit")) {
@@ -183,5 +183,79 @@ module.exports.updateStatus = async (req, res) => {
         session.endSession();
         req.flash("error","Có lỗi xảy ra khi cập nhật đơn hàng");
         res.redirect("back");
+    }
+};
+
+//[PATCH] /orders/update-status-orders
+module.exports.updateStatusOrders = async (req, res) => {
+    const { status, ids } = req.body;
+    const orderIds = ids.split(', ');
+
+    if (!res.locals.userRole.permissions.includes("orders_edit")) {
+        return res.status(403).json({ error: "Không có quyền thực hiện thao tác này" });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        };
+
+        const orders = await Order.find({ _id: { $in: orderIds } }).session(session);
+
+        if (orders.length !== orderIds.length) {
+            throw new Error("Một số đơn hàng không tồn tại");
+        }
+
+        const stockUpdates = [];
+        const orderUpdates = [];
+
+        for (const order of orders) {
+            const oldStatus = order.status;
+            
+            if (status === 'confirmed' && oldStatus === 'pending') {
+                stockUpdates.push(...order.products.map(item => ({
+                    updateOne: {
+                        filter: { _id: item.product_id },
+                        update: { $inc: { stock: -item.quantity } }
+                    }
+                })));
+            } else if (status === 'cancelled' && ['pending', 'confirmed', 'shipping'].includes(oldStatus)) {
+                stockUpdates.push(...order.products.map(item => ({
+                    updateOne: {
+                        filter: { _id: item.product_id },
+                        update: { $inc: { stock: item.quantity } }
+                    }
+                })));
+            }
+
+            orderUpdates.push({
+                updateOne: {
+                    filter: { _id: order._id },
+                    update: { 
+                        $set: { status },
+                        $push: { updatedBy }
+                    }
+                }
+            });
+        }
+
+        if (stockUpdates.length > 0) {
+            await Product.bulkWrite(stockUpdates, { session });
+        }
+
+        await Order.bulkWrite(orderUpdates, { session });
+
+        await session.commitTransaction();
+        req.flash("success", "Cập nhật thành công!");
+        res.redirect("back");
+    } catch (error) {
+        await session.abortTransaction();
+        res.status(500).json({ error: error.message });
+    } finally {
+        session.endSession();
     }
 };
