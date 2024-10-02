@@ -120,6 +120,7 @@ module.exports.detail = async (req,res) => {
 
 //[PATCH] /orders/update-status/:orderId
 module.exports.updateStatusOrder = async (req, res) => {
+
     //Kiểm tra quyền truy cập
     const permissions = res.locals.userRole.permissions;
     if (!permissions.includes("orders_edit")) {
