@@ -1,5 +1,6 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
+include ../../mixins/pagination.pug
 
 block main
     +alert-success("5000")
@@ -110,5 +111,6 @@ block main
                                                 href=`${prefixAdmin}/orders/detail/${order.id}`
                                                 class="btn btn-secondary btn-sm"
                                             ) Chi tiết
+        +pagination(pagination)
 
     script(src="/admin/js/order.js")

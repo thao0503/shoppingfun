@@ -7,8 +7,6 @@ if(formUpdateStatusOrders){
         const checkboxMulti = document.querySelector("[checkbox-multi]");
         const inputsIdChecked = checkboxMulti.querySelectorAll("input[name='id']:checked");
 
-        // const statusChange = e.target.elements.status.value;
-
 
         if(inputsIdChecked.length > 0){
             let ids = [];
@@ -24,7 +22,7 @@ if(formUpdateStatusOrders){
             formUpdateStatusOrders.submit();
 
         }else{
-            alert("Vui lòng chọn ít nhất 1 bản ghi!")
+            alert("Vui lòng chọn ít nhất 1 đơn hàng!")
         }
 
     })
