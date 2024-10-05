@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const generate = require("../helpers/generate");
-
 
 const accountSchema = new mongoose.Schema({
     fullName: String,
@@ -8,7 +6,7 @@ const accountSchema = new mongoose.Schema({
     password: String,
     token: {
         type: String,
-        default: generate.generateRandomString(20)
+        required: true
     },
     phone: String,
     avatar: String,

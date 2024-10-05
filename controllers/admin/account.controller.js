@@ -2,6 +2,7 @@ const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
 const systemConfig = require("../../config/system");
 const md5 = require("md5")
+const generateHelper = require("../../helpers/generate");
 
 
 // [GET] /admin/accounts
@@ -105,6 +106,22 @@ module.exports.createPost = async(req, res) => {
             req.body.createdBy = {
                 account_id: res.locals.user.id
             }
+
+            // Tạo token
+            let token;
+            let isUnique = false;
+            while (!isUnique) {
+                token = generateHelper.generateRandomString(20);
+                const existingAccount = await Account.findOne({ 
+                    token: token,
+                    deleted: false
+                });
+                if (!existingAccount) {
+                    isUnique = true;
+                }
+            };
+            req.body.token = token;
+            // Kết thúc tạo token
     
             const newAccount = new Account(req.body);
             await newAccount.save();
