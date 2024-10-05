@@ -27,6 +27,22 @@ module.exports.registerPost = async (req, res) => {
     }else{
         req.body.password = md5(req.body.password);
 
+            // Tạo token
+            let tokenUser;
+            let isUnique = false;
+            while (!isUnique) {
+                tokenUser = generateHelper.generateRandomString(20);
+                const existingUser = await User.findOne({ 
+                    tokenUser: tokenUser,
+                    deleted: false
+                });
+                if (!existingUser) {
+                    isUnique = true;
+                }
+            };
+            req.body.tokenUser = tokenUser;
+            // Kết thúc tạo token
+
         const newUser = new User(req.body);
         await newUser.save();
 
