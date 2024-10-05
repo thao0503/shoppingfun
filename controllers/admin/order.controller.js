@@ -215,10 +215,7 @@ module.exports.updateStatusOrder = async (req, res) => {
 
 //[PATCH] /orders/update-status-orders
 module.exports.updateStatusOrders = async (req, res) => {
-    const {
-        status,
-        ids
-    } = req.body;
+    const { status, ids } = req.body;
     const orderIds = ids.split(', ');
 
     if (!res.locals.userRole.permissions.includes("orders_edit")) {

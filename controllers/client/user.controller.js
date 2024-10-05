@@ -246,6 +246,7 @@ module.exports.orderManagement = async (req, res) => {
 
             return {
                 id: order._id,  
+                order_id: order.order_id,
                 products: processedProducts,
                 totalOrderPrice,
                 status: order.status,

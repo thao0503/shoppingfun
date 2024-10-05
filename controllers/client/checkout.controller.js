@@ -2,6 +2,7 @@ const Cart = require("../../models/cart.model")
 const Product = require("../../models/product.model")
 const Order = require("../../models/order.model")
 const productsHelper = require("../../helpers/products")
+const generateHelper = require("../../helpers/generate");
 
 //[GET] /checkout
 module.exports.index = async (req, res) => {
@@ -63,10 +64,25 @@ module.exports.order = async (req, res) => {
         products: products
     };
 
+    // Thêm mã đơn hàng 
+    let order_id;
+    let isUnique = false;
+    while (!isUnique) {
+        order_id = generateHelper.generateOrderID(8);
+        const existingOrder = await Order.findOne({ order_id });
+        if (!existingOrder) {
+            isUnique = true;
+        }
+    };
+    orderData.order_id = order_id;
+    // Kết thúc thêm mã đơn hàng
+
     // Thêm user_id nếu người dùng đã đăng nhập
     if (res.locals.user && res.locals.user.id) {
         orderData.user_id = res.locals.user.id;
     }
+    // Kết thúc thêm user_id nếu người dùng đã đăng nhập
+    
     const order = new Order(orderData);
     await order.save();
 
