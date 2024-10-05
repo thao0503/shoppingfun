@@ -37,8 +37,8 @@ module.exports.order = async (req, res) => {
     const userInfo = req.body;
     const cart = res.locals.miniCart;
 
+    // Lấy thông tin sản phẩm trong đơn hàng
     const products = [];
-
     for (const product of cart.products) {
         const productObject = {
             product_id: product.product_id,
@@ -57,14 +57,20 @@ module.exports.order = async (req, res) => {
         products.push(productObject);
     }
 
-    const order = new Order({
-        user_id: res.locals.user.id,
+    const orderData = {
         cart_id: cart.id,
         userInfo: userInfo,
         products: products
-    });
+    };
+
+    // Thêm user_id nếu người dùng đã đăng nhập
+    if (res.locals.user && res.locals.user.id) {
+        orderData.user_id = res.locals.user.id;
+    }
+    const order = new Order(orderData);
     await order.save();
 
+    //Cập nhật lại giỏ hàng khi đặt hàng thành công
     await Cart.updateOne({
         _id: cart.id
     },{
