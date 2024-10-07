@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const productsHelper = require("../../helpers/products");
 const paginationHelper = require("../../helpers/pagination");
 const systemConfig = require("../../config/system");
+const searchHelpers = require("../../helpers/search");
+
 
 //[GET] /orders
 module.exports.index = async (req, res) => {
@@ -25,6 +27,13 @@ module.exports.index = async (req, res) => {
     if (status) {
         find.status = status;
     };
+
+    // Tìm kiếm đơn hàng theo mã đơn hàng
+    const objectSearch = searchHelpers(req.query);
+    if(objectSearch.keywordRegex){
+        find.order_id = objectSearch.keywordRegex; 
+    }
+    // Kết thúc tìm kiếm đơn hàng theo mã đơn hàng
 
     // Phân trang
     const countOrders = await Order.countDocuments(find);
@@ -82,6 +91,7 @@ module.exports.index = async (req, res) => {
         pageTitle: "Quản lý đơn hàng",
         orders: processedOrders,
         status: status,
+        keyword: objectSearch.keyword,
         pagination: objectPagination
     })
 };

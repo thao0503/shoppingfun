@@ -1,9 +1,9 @@
-mixin search(keyword)
+mixin search(keyword, placeholderText)
     form(id="form-search")
         .input-group 
             input(
             type="text"
-            placeholder="Nhập từ khóa"
+            placeholder=placeholderText
             name="keyword"
             value = keyword
             class="form-control"
