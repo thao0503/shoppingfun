@@ -5,6 +5,7 @@ const md5 = require("md5")
 const generateHelper = require("../../helpers/generate");
 const filterStatusHelpers = require("../../helpers/filterStatus");
 const searchHelpers = require("../../helpers/search");
+const paginationHelper = require("../../helpers/pagination");
 
 
 // [GET] /admin/accounts
@@ -36,7 +37,22 @@ module.exports.index = async (req, res) => {
         }
         //Kết thúc tìm kiếm 
 
-        const accounts = await Account.find(find).select("-password -token");
+        // Phân trang
+        const countAccounts = await Account.countDocuments(find);
+        let objectPagination = paginationHelper(
+            {
+                currentPage: 1,
+                limitItems: 8
+            },
+            req.query,
+            countAccounts
+        )
+        // Kết thúc Phân trang
+
+        const accounts = await Account.find(find)
+        .select("-password -token")
+        .limit(objectPagination.limitItems)
+        .skip(objectPagination.skip);
 
         for (const account of accounts) {
             // Lấy thông tin nhóm quyền
@@ -76,7 +92,8 @@ module.exports.index = async (req, res) => {
             pageTitle: "Danh sách tài khoản",
             accounts: accounts,
             filterStatus: filterStatus,
-            keyword: objectSearch.keyword
+            keyword: objectSearch.keyword,
+            pagination: objectPagination
         });
     } catch (error) {
         req.flash("error","Yêu cầu của bạn chưa thể thục hiện");

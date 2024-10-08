@@ -3,6 +3,7 @@ include ../../mixins/alert.pug
 include ../../mixins/moment.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
+include ../../mixins/pagination.pug
 
 block main 
     +alert-success("5000")
@@ -120,6 +121,7 @@ block main
                         else
                             tr 
                                 td(colspan="8" class="text-center") Không tìm thấy tài khoản nào!
+            +pagination(pagination)
 
     form(
         action=""
