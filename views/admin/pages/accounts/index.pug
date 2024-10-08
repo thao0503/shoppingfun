@@ -1,12 +1,20 @@
 extends ../../layouts/default.pug
 include ../../mixins/alert.pug
 include ../../mixins/moment.pug
+include ../../mixins/filter-status.pug
 
 block main 
     +alert-success("5000")
     +alert-error("5000")
 
     h1(class="mb-4") Danh sách tài khoản
+    .card.mb-3 
+        .card-header Bộ lọc và Tìm kiếm 
+        .card-body 
+            .row
+                .col-6
+                    +filter-status(filterStatus)
+
     .card.mb-3 
         .card-header Danh sách
         .card-body 

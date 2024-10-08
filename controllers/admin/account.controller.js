@@ -3,6 +3,7 @@ const Role = require("../../models/role.model");
 const systemConfig = require("../../config/system");
 const md5 = require("md5")
 const generateHelper = require("../../helpers/generate");
+const filterStatusHelpers = require("../../helpers/filterStatus");
 
 
 // [GET] /admin/accounts
@@ -20,6 +21,13 @@ module.exports.index = async (req, res) => {
             deleted: false
         }
     
+        // Lọc sản phẩm theo trạng thái
+        const filterStatus = filterStatusHelpers(req.query);
+        if(req.query.status){
+            find.status = req.query.status;
+            }
+        //Kết thúc lọc sản phẩm theo trạng thái
+
         const accounts = await Account.find(find).select("-password -token");
 
         for (const account of accounts) {
@@ -58,7 +66,8 @@ module.exports.index = async (req, res) => {
         };    
         res.render("admin/pages/accounts/index.pug",{
             pageTitle: "Danh sách tài khoản",
-            accounts: accounts
+            accounts: accounts,
+            filterStatus: filterStatus
         });
     } catch (error) {
         req.flash("error","Yêu cầu của bạn chưa thể thục hiện");
