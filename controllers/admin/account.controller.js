@@ -4,6 +4,7 @@ const systemConfig = require("../../config/system");
 const md5 = require("md5")
 const generateHelper = require("../../helpers/generate");
 const filterStatusHelpers = require("../../helpers/filterStatus");
+const searchHelpers = require("../../helpers/search");
 
 
 // [GET] /admin/accounts
@@ -21,12 +22,19 @@ module.exports.index = async (req, res) => {
             deleted: false
         }
     
-        // Lọc sản phẩm theo trạng thái
+        // Lọc tài khoản theo trạng thái
         const filterStatus = filterStatusHelpers(req.query);
         if(req.query.status){
             find.status = req.query.status;
             }
-        //Kết thúc lọc sản phẩm theo trạng thái
+        //Kết thúc lọc tài khoản theo trạng thái
+
+        //Tìm kiếm 
+        const objectSearch = searchHelpers(req.query);
+        if(objectSearch.keywordRegex){
+            find.fullName = objectSearch.keywordRegex; 
+        }
+        //Kết thúc tìm kiếm 
 
         const accounts = await Account.find(find).select("-password -token");
 
@@ -67,7 +75,8 @@ module.exports.index = async (req, res) => {
         res.render("admin/pages/accounts/index.pug",{
             pageTitle: "Danh sách tài khoản",
             accounts: accounts,
-            filterStatus: filterStatus
+            filterStatus: filterStatus,
+            keyword: objectSearch.keyword
         });
     } catch (error) {
         req.flash("error","Yêu cầu của bạn chưa thể thục hiện");
