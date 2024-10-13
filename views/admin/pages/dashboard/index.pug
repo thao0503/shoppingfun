@@ -52,3 +52,13 @@ block main
                     p Số lượng: <b>#{statistic.user.total}</b>
                     p Hoạt động: <b>#{statistic.user.active}</b>
                     p Dừng hoạt động: <b>#{statistic.user.inactive}</b>
+        .col-6 
+            .card.mb-4 
+                .card-header Đơn hàng
+                .card-body 
+                    p Tổng số đơn hàng: <b>#{statistic.order.total}</b>
+                    p Đợi xác nhận: <b>#{statistic.order.pending}</b>
+                    p Đã xác nhận: <b>#{statistic.order.confirmed}</b>
+                    p Vân chuyển: <b>#{statistic.order.shipping}</b>
+                    p Hoàn thành: <b>#{statistic.order.completed}</b>
+                    p Đã hủy: <b>#{statistic.order.cancelled}</b>

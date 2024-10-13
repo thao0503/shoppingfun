@@ -2,6 +2,7 @@ const productCategory = require("../../models/product-category.model")
 const product = require("../../models/product.model")
 const account = require("../../models/account.model")
 const user = require("../../models/user.model")
+const order = require("../../models/order.model")
 
 // [GET] /admin/dashboard
 module.exports.dashboard = async (req, res) => {
@@ -25,6 +26,14 @@ module.exports.dashboard = async (req, res) => {
             total: 0,
             active: 0,
             inactive: 0
+        },
+        order: {
+            total: 0,
+            pending: 0,
+            confirmed: 0,
+            shipping: 0,
+            completed: 0,
+            cancelled: 0
         }
     };
     
@@ -79,6 +88,32 @@ module.exports.dashboard = async (req, res) => {
         deleted: false,
         status: "inactive"
     });
+
+    //Đơn hàng
+    statistic.order.total = await order.countDocuments({
+        deleted: false
+    });
+    statistic.order.pending = await order.countDocuments({
+        deleted: false,
+        status: "pending"
+    });
+    statistic.order.confirmed = await order.countDocuments({
+        deleted: false,
+        status: "confirmed"
+    });
+    statistic.order.shipping = await order.countDocuments({
+        deleted: false,
+        status: "shipping"
+    });
+    statistic.order.completed = await order.countDocuments({
+        deleted: false,
+        status: "completed"
+    });
+    statistic.order.cancelled = await order.countDocuments({
+        deleted: false,
+        status: "cancelled"
+    });
+
 
     res.render("admin/pages/dashboard/index.pug",{
         pageTitle: "Trang tổng quan",
