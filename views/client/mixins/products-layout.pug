@@ -1,20 +1,23 @@
 mixin products-grid(products)
-    .row 
+    div(class="row")
         each item in products
-            .col-3.mb-3 
-                a(href = `/products/detail/${item.slug}`) 
-                    .product-item(class=(item.stock === 0 ? 'out-of-stock' : '')) 
-                        .inner-image 
-                            img(src=item.thumbnail alt=item.title)
-                            if(item.featured == "1")
-                                .inner-featured Nổi bật
-                            if(item.stock === 0)
-                                .out-of-stock-label 
-                                    span Hết hàng
-                        .inner-content 
-                            h3.inner-title #{item.title}
-                            .inner-price-new #{item.newPrice}$
-                            if(item.price)
-                                .inner-price-old #{item.price}$
-                            if(item.discountPercentage)
-                                .inner-discount #{-item.discountPercentage}%
+            div(class="col-md-3 col-sm-6 mb-4")
+                div(class="card product-item h-100" class=(item.stock === 0 ? 'out-of-stock' : ''))
+                    div(class="card-img-wrapper position-relative")
+                        img(class="card-img-top" src=item.thumbnail alt=item.title)
+                        if item.featured == "1"
+                            div(class="badge badge-success position-absolute featured-badge") Nổi bật
+                        if item.stock === 0
+                            div(class="badge badge-danger position-absolute stock-badge") Hết hàng
+                    div(class="card-body d-flex flex-column")
+                        h5(class="card-title text-truncate")= item.title
+                        div(class="mt-auto")
+                            div(class="d-flex justify-content-between align-items-center")
+                                div(class="price-wrapper")
+                                    span(class="new-price font-weight-bold") #{item.newPrice}$
+                                    if item.price
+                                        small(class="old-price text-muted ml-2")
+                                            del #{item.price}$
+                                if item.discountPercentage
+                                    span(class="badge badge-warning discount-badge") #{-item.discountPercentage}%
+                    a(class="card-link stretched-link" href=`/products/detail/${item.slug}`)
