@@ -28,7 +28,7 @@ module.exports.index = async (req, res) => {
             position: "desc"
         })
         .limit(objectPagination.limitItems)
-        .skip(objectPagination.skip);;
+        .skip(objectPagination.skip);
 
     const productsRepriced = productsHelper.newProductsPrice(products);
 
@@ -60,20 +60,38 @@ module.exports.category = async (req, res) => {
         const allSubIds = getAllSubCategoryIds(allCategories, category.id, "active");
         // Kêt thúc lấy tất cả các danh mục con
 
+        // Phân trang
+        const countProducts = await Product.countDocuments({
+            product_category_id: {
+                $in: [category.id, ...allSubIds]
+            },
+            deleted: false
+        });
+        let objectPagination = paginationHelper({
+                currentPage: 1,
+                limitItems: 12
+            },
+            req.query,
+            countProducts
+        )
+        // Kết thúc Phân trang
+
         const products = await Product.find({
             product_category_id: {
                 $in: [category.id, ...allSubIds]
             },
             deleted: false
-        }).sort({
-            position: "desc"
         })
+        .sort({position: "desc"})
+        .limit(objectPagination.limitItems)
+        .skip(objectPagination.skip);
 
         const productsRepriced = productsHelper.newProductsPrice(products);
 
         res.render("client/pages/products/index.pug", {
             pageTitle: category.title,
-            products: productsRepriced
+            products: productsRepriced,
+            pagination: objectPagination
         });
     } catch (error) {
         res.redirect("back")
